@@ -1,10 +1,10 @@
 import os
-from typing import Tuple
-from xml.dom import ValidationErr
+#from typing import Tuple
+#from xml.dom import ValidationErr
 
 import click
-import json
-from pydantic import BaseModel
+#import json
+#from pydantic import BaseModel
 import pypdfium2 as pdfium
 
 from utilities import load_saved_offset, offset_images, save_offset

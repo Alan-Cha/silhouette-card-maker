@@ -1,7 +1,5 @@
-import csv
 import os
 from typing import List, Set, Tuple
-import pandas as pd
 import re
 import requests
 import time
