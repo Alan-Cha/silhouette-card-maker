@@ -1,8 +1,3 @@
-# To my knowledge dreamborn.ink is the primary Lorcana deck database. 
-# It outputs to plain text of the form
-#     {quantity} {card name} - {card version}
-# I've added a qualifier *E* to denote enchanted artworks.
-
 import re
 
 from enum import Enum
@@ -22,11 +17,11 @@ def parse_deck_helper(deck_text: str, is_card_line: Callable[[str], bool], extra
             name, enchanted, quantity = extract_card_data(line)
 
             print(f'Index: {index}, quantity: {quantity}, name: {name}, enchanted: {enchanted}')
-            try:
-                handle_card(index, name, enchanted, quantity)
-            except Exception as e:
-                print(f'Error: {e}')
-                error_lines.append((line, e))
+            # try:
+            handle_card(index, name, enchanted, quantity)
+            # except Exception as e:
+            #     print(f'Error: {e}')
+            #     error_lines.append((line, e))
 
         else:
             print(f'Skipping: "{line}"')
@@ -36,7 +31,7 @@ def parse_deck_helper(deck_text: str, is_card_line: Callable[[str], bool], extra
 
 def parse_dreamborn_list(deck_text, handle_card) -> None:
     pattern = re.compile(r'(\d+)x?\s+(.+)', re.IGNORECASE)
-    
+
     def is_dreamborn_card_line(line) -> bool:
         return bool(pattern.match(line))
 
@@ -45,6 +40,7 @@ def parse_dreamborn_list(deck_text, handle_card) -> None:
         quantity = int(match.group(1))
         enchanted = False
         name = match.group(2).strip()
+
         if "*E*" in name:
             enchanted = True
             name = name.replace("*E*","")

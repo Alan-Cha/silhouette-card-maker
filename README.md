@@ -1,22 +1,5 @@
 # Custom Card Games with the Cameo Cutting Machine
 
-## About this Fork
-This is a fork of Alan Cha's [Silhouette Card Maker](https://github.com/Alan-Cha/silhouette-card-maker-testing) primarily focused on plugin support for other TCGs.
-
-Current TCGs supported:
-
-- Magic: The Gathering (unmodified)
-- Yugioh
-- Lorcana
-
-More information about support for each game can be found in its associated `plugin` folder.
-
-Also included is `cleanup.py`, which removes ALL non-folder files from `game/front`, `game/double_sided`, and `game/back`. Run this after running `create_pdf.py` if you don't need to keep the image files.
-
-Below is the original README without images.
-
-## Introduction
-
 ![](images/display.jpg)
 Ever wanted to make your own custom card game but without the hassle of a craft knife, a rotary cutter, or a paper guillotine? How about making your own proxies to playtest your favorite TCG?
 

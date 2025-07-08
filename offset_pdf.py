@@ -1,10 +1,5 @@
 import os
-#from typing import Tuple
-#from xml.dom import ValidationErr
-
 import click
-#import json
-#from pydantic import BaseModel
 import pypdfium2 as pdfium
 
 from utilities import load_saved_offset, offset_images, save_offset
@@ -34,7 +29,7 @@ def offset_pdf(pdf_path, output_pdf_path, x_offset, y_offset, save, ppi):
     # Check for new offset values
     if x_offset is not None:
         new_x_offset = x_offset
-    
+
     if y_offset is not None:
         new_y_offset = y_offset
 
