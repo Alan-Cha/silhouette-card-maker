@@ -1,3 +1,8 @@
+---
+title: 'Yu-Gi-Oh!'
+weight: 5
+---
+
 # Yu-Gi-Oh! Plugin
 
 This plugin reads a decklist, fetches card art from [ygoprodeck](https://ygoprodeck.com/card-database), and puts them in the proper `game/` directories.
@@ -10,7 +15,7 @@ Navigate to the [root directory](../..). This plugin is not meant to be run in `
 
 If you're on macOS or Linux, open **Terminal**. If you're on Windows, open **PowerShell**.
 
-Create and start your virtual Python environment and install Python dependencies if you have not done so already. See [here](../../README.md#basic-instructions) for more information.
+Create and start your virtual Python environment and install Python dependencies if you have not done so already. See [here]({{% ref "../docs/create/#basic-usage" %}}) for more information.
 
 Put your decklist into a text file in `game/decklist`. In this example, the filename is `deck.ydk` and the decklist format is YDK (`ydk`).
 
@@ -20,7 +25,7 @@ Run the script.
 python plugins/yugioh/fetch.py game/decklist/deck.ydk ydk
 ```
 
-Now you can create the PDF using [`create_pdf.py`](../../README.md#create_pdfpy).
+Now you can create the PDF using [`create_pdf.py`]({{% ref "../docs/create" %}}).
 
 ## CLI Options
 

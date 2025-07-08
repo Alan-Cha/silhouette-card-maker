@@ -1,5 +1,6 @@
 ---
 title: 'Magic: The Gathering'
+weight: 1
 ---
 
 This plugin reads a decklist and automatically fetches the card art and puts them in the proper `game/` directories.
@@ -81,7 +82,10 @@ python plugins/mtg/fetch.py game/decklist/eldraine_commander.txt deckstats -s el
 
 ## Formats
 
-`simple`: A list of card names.
+### `simple`
+
+A list of card names.
+
 ```
 Isshin, Two Heavens as One
 Arid Mesa
@@ -90,7 +94,10 @@ Blazemire Verge
 Blightstep Pathway
 ```
 
-`mtga`: Magic: The Gathering Arena format.
+### `mtga`
+
+Magic: The Gathering Arena format.
+
 ```
 About
 Name Death & Taxes
@@ -105,7 +112,10 @@ Deck
 2 Witch Enchanter
 ```
 
-`mtgo`: Magic: The Gathering Online format.
+### `mtgo`
+
+Magic: The Gathering Online format.
+
 ```
 1 Ainok Bond-Kin
 1 Angel of Condemnation
@@ -116,7 +126,10 @@ SIDEBOARD:
 3 Deafening Silence
 ```
 
-`archidekt`: Archidekt format.
+### `archidekt`
+
+Archidekt format.
+
 ```
 1x Agadeem's Awakening // Agadeem, the Undercrypt (znr) 90 [Resilience,Land]
 1x Ancient Cornucopia (big) 16 [Maybeboard{noDeck}{noPrice},Mana Advantage]
@@ -125,7 +138,10 @@ SIDEBOARD:
 1x Assassin's Trophy (sld) 139 [Targeted Disruption]
 ```
 
-`deckstats`: Deckstats format.
+### `deckstats`
+
+Deckstats format.
+
 ```
 //Main
 1 [2XM#310] Ash Barrens
@@ -139,7 +155,10 @@ SIDEBOARD:
 1 [MID#159] Smoldering Egg // Ashmouth Dragon
 ```
 
-`moxfield`: Moxfield format.
+### `moxfield`
+
+Moxfield format.
+
 ```
 1 Ainok Bond-Kin (2X2) 5
 1 Pegasus Guardian // Rescue the Foal (CLB) 36
@@ -150,7 +169,10 @@ SIDEBOARD:
 1 Deafening Silence (MB2) 9
 ```
 
-`scryfall_json`: Scryfall JSON format.
+### `scryfall_json`
+
+Scryfall JSON format.
+
 ```json
 {
   "entries": {

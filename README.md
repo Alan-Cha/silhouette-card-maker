@@ -1,6 +1,7 @@
 # Custom Card Games with the Cameo Cutting Machine
 
 ![](images/display.jpg)
+
 Ever wanted to make your own custom card game but without the hassle of a craft knife, a rotary cutter, or a paper guillotine? How about making your own proxies to playtest your favorite TCG?
 
 You can do it all with the press of a button and a cutting machine! And I can show you how!
@@ -102,7 +103,11 @@ Get your PDF at `game/output/game.pdf`.
 
 Plugins streamline the process for acquiring card images for various games.
 
-The MTG plugin is currently available, which can automatically acquire card images based on a decklist. Various decklist formats are supported, including **MTGA**, **MTGO**, **Archidekt**, **Deckstats**, **Moxfield**, and **Scryfall**. To learn more, see [here](plugins/mtg/README.md).
+The MTG plugin supports various decklist formats, including **MTGA**, **MTGO**, **Archidekt**, **Deckstats**, **Moxfield**, and **Scryfall**. To learn more, see [here](plugins/mtg/README.md).
+
+The Yu-Gi-Oh! plugin supports **YDK** and **YDKE** formats. To learn more, see [here](plugins/yugioh/README.md).
+
+The Lorcana plugin supports **Dreamborn** format. To learn more, see [here](plugins/lorcana/README.md).
 
 ### Double-Sided Cards
 

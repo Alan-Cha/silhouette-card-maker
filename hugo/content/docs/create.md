@@ -59,7 +59,11 @@ Get your PDF at `game/output/game.pdf`.
 
 Plugins streamline the process for acquiring card images for various games.
 
-The MTG plugin is currently available, which can automatically acquire card images based on a decklist. Various decklist formats are supported, including **MTGA**, **MTGO**, **Archidekt**, **Deckstats**, **Moxfield**, and **Scryfall**. To learn more, see [here]({{% ref "../plugins" %}}).
+The MTG plugin supports various decklist formats, including **MTGA**, **MTGO**, **Archidekt**, **Deckstats**, **Moxfield**, and **Scryfall**. To learn more, see [here]({{% ref "../plugins/mtg" %}}).
+
+The Yu-Gi-Oh! plugin supports **YDK** and **YDKE** formats. To learn more, see [here]({{% ref "../plugins/yugioh" %}}).
+
+The Lorcana plugin supports **Dreamborn** format. To learn more, see [here]({{% ref "../plugins/lorcana" %}}).
 
 ## Double-Sided Cards
 

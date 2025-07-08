@@ -130,7 +130,7 @@ Put card front images into the `game/front/` folder. Then, put a card back image
 > [!TIP]
 > I've prepared the game, Zero sumZ, as an [example](https://github.com/Alan-Cha/silhouette-card-maker-testing/tree/main/examples/ZERO%20SUMZ). Simply move the assets to the appropriate image folders.
 >
-> You can also use a [plugin]({{% ref "../plugins" %}}) to populate the image folders. For example, the [Magic: The Gathering plugin]({{% ref "../plugins/mtg.md" %}}) reads a decklist and automatically fetches card art.
+> You can also use a [plugin]({{% ref "../plugins" %}}) to populate the image folders. [Magic: The Gathering]({{% ref "../plugins/mtg.md" %}}), [Yu-Gi-Oh!]({{% ref "../plugins/yugioh.md" %}}), and [Lorcana]({{% ref "../plugins/lorcana.md" %}}) are currently supported.
 
 Generate the PDF with the following:
 
@@ -154,7 +154,7 @@ Print out the PDF and laminate the sheets.
 
 ### Cut the sheets
 
-Open the `letter_standard_<version>.studio3` cutting template in Silhouette Studio. Cutting templates can be found in the [`cutting_templates/`](https://github.com/Alan-Cha/silhouette-card-maker-testing/tree/main/cutting_templates) directory.
+Open the `letter_standard_<version>.studio3` cutting template in Silhouette Studio. Cutting templates can be found in the [`cutting_templates/`](https://github.com/Alan-Cha/silhouette-card-maker-testing/tree/main/cutting_templates) folder.
 
 ![Cutting template](/images/cutting_template_standard.png)
 
