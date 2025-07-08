@@ -299,7 +299,7 @@ def generate_pdf(
                         card_layout.width,
                         card_layout.height,
                         max_print_bleed,
-                        crop,
+                        0,
                         ppi_ratio,
                         extend_corners,
                         flip=True
