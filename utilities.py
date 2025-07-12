@@ -159,6 +159,8 @@ def draw_card_with_bleed(card_image: Image, base_image: Image, box: tuple[int, i
 def draw_card_layout(card_images: List[Image.Image], base_image: Image.Image, num_rows: int, num_cols: int, x_pos: List[int], y_pos: List[int], width: int, height: int, print_bleed: tuple[int, int], crop: float, ppi_ratio: float, extend_corners: int, flip: bool):
     num_cards = num_rows * num_cols
 
+    print(f"[draw_card_layout] crop: {crop}")
+
     # Fill all the spaces with the card back
     for i, card_image in enumerate(card_images):
 
@@ -173,11 +175,19 @@ def draw_card_layout(card_images: List[Image.Image], base_image: Image.Image, nu
             card_image = card_image.rotate(180)
 
         # Crop the outer portion of a card to remove preexisting print bleed
-        if crop > 0:
+        crop_x_percent, crop_y_percent = crop
+        if crop_x_percent > 0 or crop_y_percent > 0:
             card_width, card_height = card_image.size
-            card_width_crop = math.floor(card_width / 2 * (crop / 100))
-            card_height_crop = math.floor(card_height / 2 * (crop / 100))
-            card_image = card_image.crop((card_width_crop, card_height_crop, card_width - card_width_crop, card_height - card_height_crop))
+            card_width_crop = math.floor(card_width / 2 * (crop_x_percent / 100))
+            card_height_crop = math.floor(card_height / 2 * (crop_y_percent / 100))
+            print(f"[crop] Cropping card from {card_width}x{card_height} to {(card_width - 2 * card_width_crop)}x{(card_height - 2 * card_height_crop)}")
+
+            card_image = card_image.crop((
+                card_width_crop,
+                card_height_crop,
+                card_width - card_width_crop,
+                card_height - card_height_crop
+            ))
 
         # Resize the image to normalize extend_corners
         card_image = card_image.resize((math.floor(width * ppi_ratio), math.floor(height * ppi_ratio)))
@@ -223,6 +233,7 @@ def generate_pdf(
     paper_size: PaperSize,
     only_fronts: bool,
     crop: float,
+    cropmm: float,
     extend_corners: int,
     ppi: int,
     quality: int,
@@ -294,6 +305,12 @@ def generate_pdf(
             raise Exception(f'Unsupported card size "{card_size}" with paper size "{paper_size}". Try card sizes: {paper_layout.card_layouts.keys()}.')
         card_layout = paper_layout.card_layouts[card_size_enum]
 
+        # Convert crop or cropmm to a (x%, y%) tuple
+        if cropmm is not None:
+            crop = calculate_crop_percent(card_layout.width, card_layout.height, ppi, bleed_mm=cropmm)
+        else:
+            crop = (crop, crop)
+
         num_rows = len(card_layout.y_pos)
         num_cols = len(card_layout.x_pos)
         num_cards = num_rows * num_cols
@@ -334,7 +351,7 @@ def generate_pdf(
                         card_layout.width,
                         card_layout.height,
                         max_print_bleed,
-                        0,
+                        (0, 0),
                         ppi_ratio,
                         extend_corners,
                         flip=True
@@ -517,6 +534,22 @@ def load_saved_offset() -> OffsetData:
                 print(f'Cannot validate offset data: {e}.')
 
     return None
+
+def calculate_crop_percent(card_width_px: int, card_height_px: int, ppi: int, bleed_mm: float = 3.0) -> tuple[float, float]:
+    """
+    Calculates crop % based on image pixel dimensions, DPI, and bleed mm per side.
+    """
+    mm_per_inch = 25.4
+
+    # Convert from pixels to physical mm using DPI
+    card_width_mm = (card_width_px / ppi) * mm_per_inch
+    card_height_mm = (card_height_px / ppi) * mm_per_inch
+
+    crop_x_percent = (2 * bleed_mm / card_width_mm) * 100
+    crop_y_percent = (2 * bleed_mm / card_height_mm) * 100
+
+    print(f"[cropmm] Converted {bleed_mm}mm to crop_x={crop_x_percent:.2f}%, crop_y={crop_y_percent:.2f}% at {ppi} PPI")
+    return (crop_x_percent, crop_y_percent)
 
 def offset_images(images: List[Image.Image], x_offset: int, y_offset: int, ppi: int) -> List[Image.Image]:
     offset_images = []
