@@ -156,9 +156,8 @@ Options:
                                   The desired paper size.  [default: letter]
   --only_fronts                   Only use the card fronts, exclude the card
                                   backs.
-  --crop FLOAT RANGE              Crop a percentage of the outer portion of
-                                  front and double-sided images, useful for
-                                  existing print bleed.  [0<=x<=100]
+  --crop TEXT                     Crop the outer portion of front and double-
+                                  sided images. Examples: 3mm, 0.125in, 6.5.
   --extend_corners INTEGER RANGE  Reduce artifacts produced by rounded corners
                                   in card images.  [default: 0; x>=0]
   --ppi INTEGER RANGE             Pixels per inch (PPI) when creating PDF.
@@ -180,10 +179,10 @@ Create poker-sized cards with A4 sized paper.
 python create_pdf.py --card_size poker --paper_size a4
 ```
 
-Crop the borders of the front and double-sided images. This option is useful if your images already have print bleed.
+Crop the borders of the front and double-sided images by 3 mm on all sides. This option is useful if your images already have print bleed.
 
 ```sh
-python create_pdf.py --crop 6.5
+python create_pdf.py --crop 3mm
 ```
 
 Remove the [rounded corners](#corner-artifacts) from the PDF and load the saved offset from [`offset_pdf.py`](#offset_pdfpy).

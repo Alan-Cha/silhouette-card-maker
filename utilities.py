@@ -68,20 +68,22 @@ def parse_crop_string(crop_string: str, card_width: int, card_height: int, ppi: 
     """
     crop_string = crop_string.strip().lower()
 
+    float_pattern = r"(?:\d+\.\d*|\.\d+|\d+)"  # matches 1.0, .5, or 2
+
     # Match "3mm" or "3.5mm"
-    mm_match = re.fullmatch(r"(\d+(?:\.\d+)?)mm", crop_string)
+    mm_match = re.fullmatch(rf"({float_pattern})mm", crop_string)
     if mm_match:
         crop_mm = float(mm_match.group(1))
         return convertInToCrop(crop_mm / 25.4, card_width, card_height, ppi)
 
     # Match "0.1in" or "0.125in"
-    in_match = re.fullmatch(r"(\d+(?:\.\d+)?)in", crop_string)
+    in_match = re.fullmatch(rf"({float_pattern})in", crop_string)
     if in_match:
         crop_in = float(in_match.group(1))
         return convertInToCrop(crop_in, card_width, card_height, ppi)
 
     # Match single float like "6.5" or "4.5"
-    single_match = re.fullmatch(r"\d+(\.\d+)?", crop_string)
+    single_match = re.fullmatch(float_pattern, crop_string)
     if single_match:
         num = float(crop_string)
         return num, num
@@ -219,7 +221,6 @@ def draw_card_layout(card_images: List[Image.Image], base_image: Image.Image, nu
             card_width, card_height = card_image.size
             card_width_crop = math.floor(card_width / 2 * (crop_x_percent / 100))
             card_height_crop = math.floor(card_height / 2 * (crop_y_percent / 100))
-            print(f"[crop] Cropping card from {card_width}x{card_height} to {(card_width - 2 * card_width_crop)}x{(card_height - 2 * card_height_crop)}")
 
             card_image = card_image.crop((
                 card_width_crop,
