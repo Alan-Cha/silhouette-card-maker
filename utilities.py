@@ -58,7 +58,7 @@ EXTRANEOUS_FILES = {
     "Icon\r",  # macOS oddball
 }
 
-def parse_crop_string(crop_string: str, card_width: int, card_height: int, ppi: int) -> tuple[float, float]:
+def parse_crop_string(crop_string: str | None, card_width: int, card_height: int, ppi: int) -> tuple[float, float]:
     """
     Calculates crop based on various formats.
 
@@ -66,6 +66,9 @@ def parse_crop_string(crop_string: str, card_width: int, card_height: int, ppi: 
     "3mm" -> calls function to determine mm crop
     "3in" -> calls function to determine in crop
     """
+    if crop_string is None:
+        return 0, 0
+
     crop_string = crop_string.strip().lower()
 
     float_pattern = r"(?:\d+\.\d*|\.\d+|\d+)"  # matches 1.0, .5, or 2
@@ -272,7 +275,7 @@ def generate_pdf(
     card_size: CardSize,
     paper_size: PaperSize,
     only_fronts: bool,
-    crop_string: str,
+    crop_string: str | None,
     extend_corners: int,
     ppi: int,
     quality: int,
