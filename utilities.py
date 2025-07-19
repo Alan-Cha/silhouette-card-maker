@@ -63,36 +63,28 @@ def parse_crop_string(crop_string: str, card_width: int, card_height: int, ppi: 
     Calculates crop based on various formats.
 
     "9" -> (9, 9)
-    "8.9,0" -> (8,9, 0)
     "3mm" -> calls function to determine mm crop
     "3in" -> calls function to determine in crop
     """
     crop_string = crop_string.strip().lower()
 
-    # Match "3mm" or "3.2mm"
+    # Match "3mm" or "3.5mm"
     mm_match = re.fullmatch(r"(\d+(?:\.\d+)?)mm", crop_string)
     if mm_match:
         crop_mm = float(mm_match.group(1))
         return convertInToCrop(crop_mm / 25.4, card_width, card_height, ppi)
 
-    # Match "6.5in" or "10in"
+    # Match "0.1in" or "0.125in"
     in_match = re.fullmatch(r"(\d+(?:\.\d+)?)in", crop_string)
     if in_match:
         crop_in = float(in_match.group(1))
         return convertInToCrop(crop_in, card_width, card_height, ppi)
 
-    # Match single float like "9" or "4.5"
+    # Match single float like "6.5" or "4.5"
     single_match = re.fullmatch(r"\d+(\.\d+)?", crop_string)
     if single_match:
         num = float(crop_string)
         return num, num
-
-    # Match comma-separated floats with optional spaces, like "0,8.9" or "3.0, 4"
-    range_match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*,(\d+(?:\.\d+)?)", crop_string)
-    if range_match:
-        num1 = float(range_match.group(1))
-        num2 = float(range_match.group(2))
-        return num1, num2
 
     raise ValueError(f"Invalid crop format: '{crop_string}'")
 
