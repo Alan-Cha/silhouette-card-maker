@@ -1,4 +1,5 @@
 import os
+import re
 
 import click
 from utilities import CardSize, PaperSize, generate_pdf
@@ -19,8 +20,7 @@ default_output_path = os.path.join(output_directory, 'game.pdf')
 @click.option("--card_size", default=CardSize.STANDARD.value, type=click.Choice([t.value for t in CardSize], case_sensitive=False), show_default=True, help="The desired card size.")
 @click.option("--paper_size", default=PaperSize.LETTER.value, type=click.Choice([t.value for t in PaperSize], case_sensitive=False), show_default=True, help="The desired paper size.")
 @click.option("--only_fronts", default=False, is_flag=True, help="Only use the card fronts, exclude the card backs.")
-@click.option("--crop", default=0, type=click.FloatRange(min=0, max=100), help="Crop a percentage of the outer portion of front and double-sided images, useful for existing print bleed.")
-@click.option("--cropmm", default=None, type=click.FloatRange(min=0), show_default=False, help="Crop a fixed mm amount from each edge to remove print bleed (e.g. 3 = crop 3mm from each edge). Overrides --crop if set.")
+@click.option("--crop", help="Crop the outer portion of front and double-sided images. Examples: 3mm, 0.25in, 6.5, \"3, 3\".")
 @click.option("--extend_corners", default=0, type=click.IntRange(min=0), show_default=True, help="Reduce artifacts produced by rounded corners in card images.")
 @click.option("--ppi", default=300, type=click.IntRange(min=0), show_default=True, help="Pixels per inch (PPI) when creating PDF.")
 @click.option("--quality", default=75, type=click.IntRange(min=0, max=100), show_default=True, help="File compression. A higher value corresponds to better quality and larger file size.")
@@ -37,7 +37,6 @@ def cli(
     paper_size,
     only_fronts,
     crop,
-    cropmm,
     extend_corners,
     ppi,
     quality,
@@ -54,7 +53,6 @@ def cli(
         paper_size,
         only_fronts,
         crop,
-        cropmm,
         extend_corners,
         ppi,
         quality,

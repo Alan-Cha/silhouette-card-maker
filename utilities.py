@@ -4,6 +4,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 from typing import Dict, List
 from xml.dom import ValidationErr
 
@@ -56,6 +57,54 @@ EXTRANEOUS_FILES = {
     "desktop.ini",
     "Icon\r",  # macOS oddball
 }
+
+def parse_crop_string(crop_string: str, card_width: int, card_height: int, ppi: int) -> tuple[float, float]:
+    """
+    Calculates crop based on various formats.
+
+    "9" -> (9, 9)
+    "8.9,0" -> (8,9, 0)
+    "3mm" -> calls function to determine mm crop
+    "3in" -> calls function to determine in crop
+    """
+    crop_string = crop_string.strip().lower()
+
+    # Match "3mm" or "3.2mm"
+    mm_match = re.fullmatch(r"(\d+(?:\.\d+)?)mm", crop_string)
+    if mm_match:
+        crop_mm = float(mm_match.group(1))
+        return convertInToCrop(crop_mm / 25.4, card_width, card_height, ppi)
+
+    # Match "6.5in" or "10in"
+    in_match = re.fullmatch(r"(\d+(?:\.\d+)?)in", crop_string)
+    if in_match:
+        crop_in = float(in_match.group(1))
+        return convertInToCrop(crop_in, card_width, card_height, ppi)
+
+    # Match single float like "9" or "4.5"
+    single_match = re.fullmatch(r"\d+(\.\d+)?", crop_string)
+    if single_match:
+        num = float(crop_string)
+        return num, num
+
+    # Match comma-separated floats with optional spaces, like "0,8.9" or "3.0, 4"
+    range_match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*,(\d+(?:\.\d+)?)", crop_string)
+    if range_match:
+        num1 = float(range_match.group(1))
+        num2 = float(range_match.group(2))
+        return num1, num2
+
+    raise ValueError(f"Invalid crop format: '{crop_string}'")
+
+def convertInToCrop(crop_in: float, card_width_px: int, card_height_px: int, ppi: int) -> tuple[float, float]:
+    # Convert from pixels to physical mm using DPI
+    card_width_mm = card_width_px / ppi
+    card_height_mm = card_height_px / ppi
+
+    crop_x_percent = 2 * crop_in / card_width_mm * 100
+    crop_y_percent = 2 * crop_in / card_height_mm * 100
+
+    return (crop_x_percent, crop_y_percent)
 
 def delete_hidden_files_in_directory(path: str):
     if len(path) > 0:
@@ -156,10 +205,8 @@ def draw_card_with_bleed(card_image: Image, base_image: Image, box: tuple[int, i
 
     return base_image
 
-def draw_card_layout(card_images: List[Image.Image], base_image: Image.Image, num_rows: int, num_cols: int, x_pos: List[int], y_pos: List[int], width: int, height: int, print_bleed: tuple[int, int], crop: float, ppi_ratio: float, extend_corners: int, flip: bool):
+def draw_card_layout(card_images: List[Image.Image], base_image: Image.Image, num_rows: int, num_cols: int, x_pos: List[int], y_pos: List[int], width: int, height: int, print_bleed: tuple[int, int], crop: tuple[float, float], ppi_ratio: float, extend_corners: int, flip: bool):
     num_cards = num_rows * num_cols
-
-    print(f"[draw_card_layout] crop: {crop}")
 
     # Fill all the spaces with the card back
     for i, card_image in enumerate(card_images):
@@ -232,8 +279,7 @@ def generate_pdf(
     card_size: CardSize,
     paper_size: PaperSize,
     only_fronts: bool,
-    crop: float,
-    cropmm: float,
+    crop_string: str,
     extend_corners: int,
     ppi: int,
     quality: int,
@@ -305,18 +351,11 @@ def generate_pdf(
             raise Exception(f'Unsupported card size "{card_size}" with paper size "{paper_size}". Try card sizes: {paper_layout.card_layouts.keys()}.')
         card_layout = paper_layout.card_layouts[card_size_enum]
 
-        # Convert crop or cropmm to a (x%, y%) tuple
-        if cropmm is not None:
-            crop = calculate_crop_percent(card_layout.width, card_layout.height, ppi, bleed_mm=cropmm)
-        else:
-            crop = (crop, crop)
+        crop = parse_crop_string(crop_string, card_layout.width, card_layout.height, ppi)
 
         num_rows = len(card_layout.y_pos)
         num_cols = len(card_layout.x_pos)
         num_cards = num_rows * num_cols
-
-        blank_filename = f'{paper_size}_blank.jpg'
-        blank_path = os.path.join(asset_directory, blank_filename)
 
         registration_filename =  f'{paper_size}_registration.jpg'
         registration_path = os.path.join(asset_directory, registration_filename)
@@ -534,22 +573,6 @@ def load_saved_offset() -> OffsetData:
                 print(f'Cannot validate offset data: {e}.')
 
     return None
-
-def calculate_crop_percent(card_width_px: int, card_height_px: int, ppi: int, bleed_mm: float = 3.0) -> tuple[float, float]:
-    """
-    Calculates crop % based on image pixel dimensions, DPI, and bleed mm per side.
-    """
-    mm_per_inch = 25.4
-
-    # Convert from pixels to physical mm using DPI
-    card_width_mm = (card_width_px / ppi) * mm_per_inch
-    card_height_mm = (card_height_px / ppi) * mm_per_inch
-
-    crop_x_percent = (2 * bleed_mm / card_width_mm) * 100
-    crop_y_percent = (2 * bleed_mm / card_height_mm) * 100
-
-    print(f"[cropmm] Converted {bleed_mm}mm to crop_x={crop_x_percent:.2f}%, crop_y={crop_y_percent:.2f}% at {ppi} PPI")
-    return (crop_x_percent, crop_y_percent)
 
 def offset_images(images: List[Image.Image], x_offset: int, y_offset: int, ppi: int) -> List[Image.Image]:
     offset_images = []
