@@ -1,6 +1,6 @@
 # Altered Plugin
 
-This plugin reads a decklist from [Ajordat]() and puts the card images into the proper `game/` directories.
+This plugin reads a decklist from [Ajordat](https://altered.ajordat.com/) and puts the card images into the proper `game/` directories.
 
 This plugin currently only supports the ``Ajordat`` format.
 
