@@ -14,8 +14,9 @@ game/output/*
 game/decklist/*
 !game/decklist/EMPTY.md
 
+plugins/pokemon/limitless.py 
+plugins/pokemon/tcgdex.py
+
 data
-
 images/*.xcf
-
 hugo/public/

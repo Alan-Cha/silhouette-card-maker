@@ -6,3 +6,4 @@ pydantic==2.11.1
 Requests==2.32.3
 pypdfium2==4.30.0
 split-image==2.0.1
+pymupdf==1.26.3
