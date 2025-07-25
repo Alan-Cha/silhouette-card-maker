@@ -5,15 +5,11 @@ sidebar:
 weight: 1
 ---
 
-<!-- !TODO: YouTube video -->
-
 ![](/images/display.jpg)
 
 Ever wanted to make your own custom card game? How about making proxies for your favorite TCG?
 
 It's easy to make cards with a cutting machine and I can show you how!
-
-<!-- !TODO: Cameo 5 picture -->
 
 Why use a cutting machine though?
 
@@ -21,14 +17,16 @@ You could do it by hand with a craft knife, a rotary cutter, or a paper guilloti
 
 Join me in the 21st century where we have technology to solve our problems!
 
-With the press of a button, a cutting machine can do all the hard work for you. Each card comes out exactly the same, **perfectly sized** and **perfectly centered**. It even does the **rounded corners** for you!
+With the press of a button, a cutting machine can do all the hard work for you. Each card comes out exactly the same, **perfectly sized** and **perfectly centered**. It even does the **rounded corners** for you! No more manual work required.
 
-<!-- !TODO: Picture of a lot of cards with Cameo 5 -->
+Don't believe me? Watch me cut **104 cards in 26 minutes** without breaking a sweat!
 
-I'll go over everything you need to know to make your custom card games and proxies with a cutting machine including:
+{{< youtube RVHtqsRW8t8 >}}
 
-* [Estimated costs of DIY cards]({{% ref "costs.md" %}})
-* [List of equipment and materials]({{% ref "supplies.md" %}})
+In this tutorial, I'll go over everything you need to know including:
+
+* [Estimated costs]({{% ref "costs.md" %}})
+* [Equipment and supply list]({{% ref "supplies.md" %}})
 * [Primer on Silhouette cutting machines]({{% ref "primer.md" %}})
 * [Step by step cutting guide]({{% ref "guide.md" %}})
 * [Troubleshooting]({{% ref "troubleshooting.md" %}})
