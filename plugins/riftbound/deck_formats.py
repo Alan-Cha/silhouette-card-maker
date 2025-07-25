@@ -2,6 +2,7 @@ from re import compile
 from enum import Enum
 from _collections_abc import Set
 from typing import Callable, Dict, Optional, Tuple
+from base64 import b64decode
 
 card_data_tuple = Tuple[str, str, int] # Name, Card Number, Quantity 
 
@@ -56,12 +57,38 @@ def parse_tts(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]
         
     return parse_deck_helper(deck_text, handle_card, split_tts_deck, is_tts_line, extract_tts_card_data)
 
+def parse_pixelborn(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]:
+    pattern = compile(r'^(\D{3})-(\d{3}\D\\|\d{3})-(\d+)$') # SET-CARD-ART
+    alternate_art_suffix = 'a'
+
+    def is_pixelborn_line(line) -> bool:
+        return bool(pattern.match(line))
+    
+    def extract_pixelborn_card_data(line) -> card_data_tuple:
+        match = pattern.match(line)
+        if match:
+            card_number = f'{ match.group(1).strip() }-{ match.group(2).strip() }'
+
+            if int(match.group(3)) > 1:
+                card_number = f'{card_number}{alternate_art_suffix}' # Assume that the desired art is the alternate art
+
+            return ("", card_number, 1)
+
+    def split_pixelborn_deck(deck_text: str) -> Set[str]:
+        decoded = b64decode(deck_text).decode()
+        return decoded.split('$')
+    
+    return parse_deck_helper(deck_text, handle_card, split_pixelborn_deck, is_pixelborn_line, extract_pixelborn_card_data)
+
 class DeckFormat(str, Enum):
-    TTS = "tts"
+    TTS       = "tts"
+    PIXELBORN = "pixelborn"
 
 def parse_deck(deck_text: str, format: DeckFormat, handle_card: Optional[Callable] = None) -> Dict[str, int]:
     if format == DeckFormat.TTS:
         return parse_tts(deck_text, handle_card)
+    elif format == DeckFormat.PIXELBORN:
+        return parse_pixelborn(deck_text, handle_card)
     else:
         raise ValueError("Unrecognized deck format.")
 
