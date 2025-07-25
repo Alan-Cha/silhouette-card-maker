@@ -36,7 +36,7 @@ def parse_deck_helper(deck_text: str, handle_card: Optional[Callable],
     return deck
 
 def parse_tts(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]:
-    pattern = compile(r'^(\D{3})-(\d{3}\D\\|\d{3})-(\d+)$') # SET-CARD-ART
+    pattern = compile(r'^(.+)-(.+)-(.+)$') # '{Set ID}-{Card ID}-{Art Number}'
     alternate_art_suffix = 'a'
 
     def is_tts_line(line) -> bool:
@@ -58,7 +58,7 @@ def parse_tts(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]
     return parse_deck_helper(deck_text, handle_card, split_tts_deck, is_tts_line, extract_tts_card_data)
 
 def parse_pixelborn(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]:
-    pattern = compile(r'^(\D{3})-(\d{3}\D\\|\d{3})-(\d+)$') # SET-CARD-ART
+    pattern = compile(r'^(.+)-(.+)-(.+)$') # '{Set ID}-{Card ID}-{Art Number}'
     alternate_art_suffix = 'a'
 
     def is_pixelborn_line(line) -> bool:
