@@ -39,3 +39,4 @@ def get_handle_card(
         )
 
     return configured_fetch_card
+    

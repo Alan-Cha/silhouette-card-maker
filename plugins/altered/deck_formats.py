@@ -1,7 +1,6 @@
 from re import compile
 from enum import Enum
-from _collections_abc import Set
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Tuple
 
 card_data_tuple = Tuple[str, int] # QR, Quantity
 
@@ -29,7 +28,7 @@ def parse_deck_helper(deck_text: str, handle_card: Callable, is_card_line: Calla
         print(f'Errors: {error_lines}')
 
 def parse_ajordat(deck_text: str, handle_card: Callable) -> None:
-    pattern = compile(r'^(\d{1})\s+(.+)$') # Quantity QR
+    pattern = compile(r'^(\d{1})\s+(.+)$') # '{Quantity} {QR}'
 
     def is_ajordat_line(line) -> bool:
         return bool(pattern.match(line))
