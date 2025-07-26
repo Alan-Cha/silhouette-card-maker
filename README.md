@@ -122,6 +122,8 @@ The Yu-Gi-Oh! plugin supports **YDK** and **YDKE** formats. To learn more, see [
 
 The Lorcana plugin supports **Dreamborn** format. To learn more, see [here](plugins/lorcana/README.md).
 
+The Riftbound plugin supports **Tabletop Simulator** and **Pixelborn** format. To learn more, see [here](plugins/riftbound/README.md)
+
 ### Double-Sided Cards
 
 To create double-sided cards, put front images in the `game/front/` folder and back images in the `game/double_sided/` folder. The filenames (and file extensions) must match for each pair.
