@@ -19,7 +19,7 @@ def fetch_card(
 
     # Query for card info
     json = request_altered(f'https://api.altered.gg/cards/{qr}').json()
-    card_art = request_altered(json.get("imagePath")).content
+    card_art = request_altered(json.get('imagePath')).content
     
     for counter in range(quantity):
         image_path = path.join(front_img_dir, f'{str(index)}{qr}{str(counter + 1)}.png')
