@@ -22,8 +22,11 @@ def cli(deck_path: str, format: DeckFormat, image_server: ImageServer):
 
         deck = parse_deck(deck_text, format)
 
+        index: int = 0
+
         for card_number, quantity in deck.items():
-            fetch_card_art(card_number, quantity, image_server, front_directory)
+            index += 1
+            fetch_card_art(index, card_number, quantity, image_server, front_directory)
 
 if __name__ == '__main__':
     cli()

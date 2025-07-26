@@ -50,7 +50,7 @@ def parse_tts(deck_text: str, handle_card: Optional[Callable]) -> Dict[str, int]
             if int(match.group(3)) > 1:
                 card_number = f'{card_number}{alternate_art_suffix}' # Assume that the desired art is the alternate art
 
-            return ("", card_number, 1)
+            return ('', card_number, 1)
 
     def split_tts_deck(deck_text: str) -> Set[str]:
         return deck_text.strip().split(' ')
@@ -72,7 +72,7 @@ def parse_pixelborn(deck_text: str, handle_card: Optional[Callable]) -> Dict[str
             if int(match.group(3)) > 1:
                 card_number = f'{card_number}{alternate_art_suffix}' # Assume that the desired art is the alternate art
 
-            return ("", card_number, 1)
+            return ('', card_number, 1)
 
     def split_pixelborn_deck(deck_text: str) -> Set[str]:
         decoded = b64decode(deck_text).decode()
@@ -81,8 +81,8 @@ def parse_pixelborn(deck_text: str, handle_card: Optional[Callable]) -> Dict[str
     return parse_deck_helper(deck_text, handle_card, split_pixelborn_deck, is_pixelborn_line, extract_pixelborn_card_data)
 
 class DeckFormat(str, Enum):
-    TTS       = "tts"
-    PIXELBORN = "pixelborn"
+    TTS       = 'tts'
+    PIXELBORN = 'pixelborn'
 
 def parse_deck(deck_text: str, format: DeckFormat, handle_card: Optional[Callable] = None) -> Dict[str, int]:
     if format == DeckFormat.TTS:
@@ -90,7 +90,7 @@ def parse_deck(deck_text: str, format: DeckFormat, handle_card: Optional[Callabl
     elif format == DeckFormat.PIXELBORN:
         return parse_pixelborn(deck_text, handle_card)
     else:
-        raise ValueError("Unrecognized deck format.")
+        raise ValueError('Unrecognized deck format.')
 
 if __name__ == '__main__':
     parse_deck()
