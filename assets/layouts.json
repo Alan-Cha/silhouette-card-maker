@@ -16,6 +16,12 @@
         }
     },
     "card_sizes": {
+        "25mm_circle": {
+            "width": "25mm",
+            "height": "25mm",
+            "radius": "12.5mm",
+            "shape": "circle"
+        },
         "american_mini": {
             "width": "41mm",
             "height": "63mm",
@@ -518,6 +524,17 @@
                     "num_cols": 3,
                     "registration": {
                         "length": "32.51mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "10.92mm"
                     }
                 }
             }
