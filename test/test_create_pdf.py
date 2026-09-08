@@ -161,3 +161,82 @@ def test_borderless_with_specialty_errors():
             '--specialty', 'letter-commander',
         ])
         assert result.exit_code != 0
+
+
+# --- Transparent Background Tests ---
+# Pages always have a transparent background (see page_manager.generate_reg_mark).
+
+def test_output_images_default_to_png_with_transparent_background():
+    """Bare --output_images defaults to png and produces RGBA images with a
+    transparent margin and opaque card art."""
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as output_dir:
+        result = runner.invoke(cli, [
+            '--front_dir_path', 'test/basic/front',
+            '--back_dir_path', 'test/basic/back',
+            '--output_path', output_dir,
+            '--only_fronts',
+            '--output_images',
+        ])
+        assert result.exit_code == 0, f"CLI failed: {result.output}\n{result.exception}"
+
+        page_path = os.path.join(output_dir, 'page1.png')
+        assert os.path.exists(page_path)
+
+        with Image.open(page_path) as img:
+            assert img.mode == 'RGBA'
+            assert img.getpixel((0, 0))[3] == 0  # page corner is transparent
+
+
+def test_output_images_with_explicit_format():
+    """--output_images accepts an explicit format, e.g. '--output_images webp'."""
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as output_dir:
+        result = runner.invoke(cli, [
+            '--front_dir_path', 'test/basic/front',
+            '--back_dir_path', 'test/basic/back',
+            '--output_path', output_dir,
+            '--only_fronts',
+            '--output_images', 'webp',
+        ])
+        assert result.exit_code == 0, f"CLI failed: {result.output}\n{result.exception}"
+
+        page_path = os.path.join(output_dir, 'page1.webp')
+        assert os.path.exists(page_path)
+
+        with Image.open(page_path) as img:
+            assert img.mode == 'RGBA'
+
+
+def test_output_images_rejects_alpha_incompatible_format():
+    """--output_images only offers formats that can carry the transparent background."""
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as output_dir:
+        result = runner.invoke(cli, [
+            '--front_dir_path', 'test/basic/front',
+            '--back_dir_path', 'test/basic/back',
+            '--output_path', output_dir,
+            '--only_fronts',
+            '--output_images', 'jpg',
+        ])
+        assert result.exit_code != 0
+
+
+def test_pdf_has_transparent_background():
+    """Without --output_images, the PDF itself carries real transparency
+    (JPEG2000 + SMask), not a flattened white background."""
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as output_dir:
+        output_path = os.path.join(output_dir, 'game.pdf')
+        result = runner.invoke(cli, [
+            '--front_dir_path', 'test/basic/front',
+            '--back_dir_path', 'test/basic/back',
+            '--output_path', output_path,
+            '--only_fronts',
+        ])
+        assert result.exit_code == 0, f"CLI failed: {result.output}\n{result.exception}"
+
+        with open(output_path, 'rb') as f:
+            pdf_bytes = f.read()
+        assert b'JPXDecode' in pdf_bytes
+        assert b'SMaskInData' in pdf_bytes

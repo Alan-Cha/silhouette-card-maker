@@ -6,6 +6,7 @@ import pytest
 from pathlib import Path
 from PIL import Image
 
+import page_manager
 import utilities
 from utilities import (
     parse_crop_string,
@@ -32,7 +33,7 @@ from utilities import (
     find_extra_layout_owner,
     EXTRA_LAYOUTS_ENV,
 )
-from enums import Orientation
+from enums import Orientation, Registration
 
 
 class TestParseCropString:
@@ -504,6 +505,24 @@ class TestOffsetImages:
 
         assert result_300[1].getpixel((70, 0)) == (255, 255, 255)
         assert result_600[1].getpixel((40, 0)) == (255, 255, 255)
+
+    def test_angle_offset_fillcolor_rgb(self):
+        """Rotating an RGB image should fill exposed corners with white."""
+        img_front = Image.new('RGB', (100, 100), color='red')
+        img_back = Image.new('RGB', (100, 100), color='black')
+
+        result = offset_images([img_front, img_back], 0, 0, 300, angle_offset=15.0)
+        assert result[1].mode == 'RGB'
+        assert result[1].getpixel((0, 0)) == (255, 255, 255)
+
+    def test_angle_offset_fillcolor_rgba(self):
+        """Rotating an RGBA image should fill exposed corners with transparency, not white."""
+        img_front = Image.new('RGBA', (100, 100), color=(255, 0, 0, 255))
+        img_back = Image.new('RGBA', (100, 100), color=(0, 0, 0, 255))
+
+        result = offset_images([img_front, img_back], 0, 0, 300, angle_offset=15.0)
+        assert result[1].mode == 'RGBA'
+        assert result[1].getpixel((0, 0)) == (0, 0, 0, 0)
 
 
 class TestOffsetDataSaveLoad:
@@ -1886,4 +1905,33 @@ class TestAddFrontBackPages:
             orientation=Orientation.PORTRAIT, label_margin_px=10, borderless=False
         )
         assert len(pages) == 2
+
+
+class TestGenerateRegMark:
+    """Tests for page_manager.generate_reg_mark()."""
+
+    def test_transparent_background(self):
+        """The canvas is RGBA with a fully transparent background and an opaque
+        registration mark."""
+        img = page_manager.generate_reg_mark(
+            paper_width='2in',
+            paper_height='2in',
+            inset='0.4in',
+            thickness='0.02in',
+            length='0.2in',
+            dpi=100,
+            registration=Registration.THREE,
+        )
+        assert img.mode == 'RGBA'
+
+        # Corner is far from the registration mark, should be fully transparent.
+        assert img.getpixel((0, 0))[3] == 0
+
+        # The registration square is drawn near the bottom-left inset; scan for an opaque pixel.
+        found_opaque = any(
+            img.getpixel((x, y))[3] == 255
+            for x in range(img.width)
+            for y in range(img.height)
+        )
+        assert found_opaque, "Expected at least one fully opaque registration-mark pixel"
 

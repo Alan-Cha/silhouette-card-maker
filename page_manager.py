@@ -50,7 +50,7 @@ def generate_reg_mark(
         registration: Registration pattern (THREE or FOUR).
 
     Returns:
-        PIL Image with registration marks drawn on a white background.
+        PIL Image (RGBA) with registration marks drawn on a transparent background.
     """
     paper_width_mm = size_convert.size_to_mm(paper_width)
     paper_height_mm = size_convert.size_to_mm(paper_height)
@@ -71,7 +71,8 @@ def generate_reg_mark(
     ax.set_ylim(0, paper_height_mm)
     ax.set_aspect('equal')
     ax.axis('off')
-    ax.set_facecolor('white')
+    ax.set_facecolor('none')
+    fig.patch.set_alpha(0.0)
 
     if registration == Registration.THREE:
         # Add filled black square (5x5mm at inset from left and top)
@@ -151,7 +152,7 @@ def generate_reg_mark(
 
     # Save output
     img_buf = io.BytesIO()
-    plt.savefig(img_buf, format='jpg')
+    plt.savefig(img_buf, format='png', transparent=True)
     img_buf.seek(0)
     img = Image.open(img_buf)
     plt.close(fig)  # Close the figure to free memory

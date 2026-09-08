@@ -140,6 +140,13 @@ class FitMode(str, Enum):
     STRETCH = "stretch"
     CROP = "crop"
 
+class ImageFormat(str, Enum):
+    """Formats usable with --output_images. Pages always have a transparent
+    background, so only alpha-capable formats are offered."""
+    PNG = "png"
+    WEBP = "webp"
+    TIFF = "tiff"
+
 class CardLayoutSize(BaseModel):
     width: int
     height: int
@@ -1055,7 +1062,7 @@ def generate_pdf(
     back_dir_path: str,
     ds_dir_path: str,
     output_path: str,
-    output_images: bool,
+    output_image_format: str | None,
     card_size: str,
     paper_size: str,
     registration: Registration,
@@ -1099,7 +1106,12 @@ def generate_pdf(
     delete_hidden_files_in_directory(ds_dir_path)
 
     # Sanity check for output images
+    output_images = output_image_format is not None
     if output_images:
+        try:
+            output_image_format = ImageFormat(output_image_format.lower())
+        except ValueError:
+            raise Exception(f'Unsupported image format "{output_image_format}". Use "png", "webp", or "tiff".')
         output_path = get_directory(output_path)
     else:
         if not output_path.lower().endswith(".pdf"):
@@ -1492,7 +1504,7 @@ def generate_pdf(
         # Save the pages array as a PDF
         if output_images:
             for index, page in enumerate(pages):
-                page.save(os.path.join(output_path, f'page{index + 1}.png'), resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
+                page.save(os.path.join(output_path, f'page{index + 1}.{output_image_format.value}'), format=output_image_format.value.upper(), resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
 
             print(f'Generated images: {output_path}')
 
@@ -1544,7 +1556,8 @@ def offset_images(images: List[Image.Image], x_offset: int, y_offset: int, ppi: 
             # Apply angle rotation if specified
             # Negative angle because PIL rotates counter-clockwise, but we want positive = clockwise
             if angle_offset != 0.0:
-                result = result.rotate(-angle_offset, center=(image.width / 2, image.height / 2), fillcolor='white')
+                fillcolor = (0, 0, 0, 0) if image.mode == 'RGBA' else 'white'
+                result = result.rotate(-angle_offset, center=(image.width / 2, image.height / 2), fillcolor=fillcolor)
             result_images.append(result)
         else:
             result_images.append(image)
