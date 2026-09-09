@@ -208,8 +208,10 @@ def test_output_images_with_explicit_format():
             assert img.mode == 'RGBA'
 
 
-def test_output_images_rejects_alpha_incompatible_format():
-    """--output_images only offers formats that can carry the transparent background."""
+@pytest.mark.parametrize("image_format", ["jpg", "bmp"])
+def test_output_images_flattens_alpha_incompatible_formats_to_white(image_format):
+    """jpg/bmp can't carry alpha, so the transparent page is flattened onto white
+    instead of erroring."""
     runner = CliRunner()
     with tempfile.TemporaryDirectory() as output_dir:
         result = runner.invoke(cli, [
@@ -217,7 +219,28 @@ def test_output_images_rejects_alpha_incompatible_format():
             '--back_dir_path', 'test/basic/back',
             '--output_path', output_dir,
             '--only_fronts',
-            '--output_images', 'jpg',
+            '--output_images', image_format,
+        ])
+        assert result.exit_code == 0, f"CLI failed: {result.output}\n{result.exception}"
+
+        page_path = os.path.join(output_dir, f'page1.{image_format}')
+        assert os.path.exists(page_path)
+
+        with Image.open(page_path) as img:
+            assert img.mode == 'RGB'
+            assert img.getpixel((0, 0)) == (255, 255, 255)
+
+
+def test_output_images_rejects_unsupported_format():
+    """--output_images rejects formats outside the supported list entirely."""
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as output_dir:
+        result = runner.invoke(cli, [
+            '--front_dir_path', 'test/basic/front',
+            '--back_dir_path', 'test/basic/back',
+            '--output_path', output_dir,
+            '--only_fronts',
+            '--output_images', 'gif',
         ])
         assert result.exit_code != 0
 

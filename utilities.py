@@ -142,10 +142,16 @@ class FitMode(str, Enum):
 
 class ImageFormat(str, Enum):
     """Formats usable with --output_images. Pages always have a transparent
-    background, so only alpha-capable formats are offered."""
+    background; png/webp/tiff carry that transparency through, while jpg and
+    bmp (which cannot represent alpha) are flattened onto a white background."""
     PNG = "png"
     WEBP = "webp"
     TIFF = "tiff"
+    JPG = "jpg"
+    BMP = "bmp"
+
+# Formats with no alpha channel: pages are flattened onto a white background before saving.
+NON_ALPHA_IMAGE_FORMATS = (ImageFormat.JPG, ImageFormat.BMP)
 
 class CardLayoutSize(BaseModel):
     width: int
@@ -1111,7 +1117,7 @@ def generate_pdf(
         try:
             output_image_format = ImageFormat(output_image_format.lower())
         except ValueError:
-            raise Exception(f'Unsupported image format "{output_image_format}". Use "png", "webp", or "tiff".')
+            raise Exception(f'Unsupported image format "{output_image_format}". Use one of: {", ".join(f.value for f in ImageFormat)}.')
         output_path = get_directory(output_path)
     else:
         if not output_path.lower().endswith(".pdf"):
@@ -1503,8 +1509,14 @@ def generate_pdf(
 
         # Save the pages array as a PDF
         if output_images:
+            pillow_format = 'JPEG' if output_image_format == ImageFormat.JPG else output_image_format.value.upper()
             for index, page in enumerate(pages):
-                page.save(os.path.join(output_path, f'page{index + 1}.{output_image_format.value}'), format=output_image_format.value.upper(), resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
+                if output_image_format in NON_ALPHA_IMAGE_FORMATS:
+                    # Flatten onto white: these formats cannot represent the page's transparency.
+                    flattened = Image.new('RGB', page.size, (255, 255, 255))
+                    flattened.paste(page, mask=page)
+                    page = flattened
+                page.save(os.path.join(output_path, f'page{index + 1}.{output_image_format.value}'), format=pillow_format, resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
 
             print(f'Generated images: {output_path}')
 
