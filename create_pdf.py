@@ -2,7 +2,7 @@ import os
 import re
 
 import click
-from utilities import Registration, FitMode, generate_pdf, load_layout_config, get_all_card_size_names, get_all_paper_size_names, get_all_specialty_layout_names
+from utilities import Registration, FitMode, ImageFormat, generate_pdf, load_layout_config, get_all_card_size_names, get_all_paper_size_names, get_all_specialty_layout_names
 from enums import Orientation
 
 front_directory = os.path.join('game', 'front')
@@ -22,7 +22,7 @@ specialty_choices = get_all_specialty_layout_names(layout_config)
 @click.option("--back_dir_path", default=back_directory, show_default=True, help="The path to the directory containing one or more card backs.")
 @click.option("--double_sided_dir_path", default=double_sided_directory, show_default=True, help="The path to the directory containing card backs for double-sided cards.")
 @click.option("--output_path", default=default_output_path, show_default=True, help="The desired path to the output PDF.")
-@click.option("--output_images", default=False, is_flag=True, help="Create images instead of a PDF.")
+@click.option("--output_images", is_flag=False, flag_value=ImageFormat.PNG.value, default=None, type=click.Choice([f.value for f in ImageFormat], case_sensitive=False), help="Create images instead of a PDF. Optionally specify a format, e.g. '--output_images webp' (default: png).")
 
 @click.option("--card_size", default="standard", type=click.Choice(card_size_choices, case_sensitive=False), show_default=True, help="The desired card size.")
 @click.option("--paper_size", default="letter", type=click.Choice(paper_size_choices, case_sensitive=False), show_default=True, help="The desired paper size.")

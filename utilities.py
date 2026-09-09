@@ -140,6 +140,19 @@ class FitMode(str, Enum):
     STRETCH = "stretch"
     CROP = "crop"
 
+class ImageFormat(str, Enum):
+    """Formats usable with --output_images. Pages always have a transparent
+    background; png/webp/tiff carry that transparency through, while jpg and
+    bmp (which cannot represent alpha) are flattened onto a white background."""
+    PNG = "png"
+    WEBP = "webp"
+    TIFF = "tiff"
+    JPG = "jpg"
+    BMP = "bmp"
+
+# Formats with no alpha channel: pages are flattened onto a white background before saving.
+NON_ALPHA_IMAGE_FORMATS = (ImageFormat.JPG, ImageFormat.BMP)
+
 class CardLayoutSize(BaseModel):
     width: int
     height: int
@@ -1055,7 +1068,7 @@ def generate_pdf(
     back_dir_path: str,
     ds_dir_path: str,
     output_path: str,
-    output_images: bool,
+    output_image_format: str | None,
     card_size: str,
     paper_size: str,
     registration: Registration,
@@ -1099,7 +1112,12 @@ def generate_pdf(
     delete_hidden_files_in_directory(ds_dir_path)
 
     # Sanity check for output images
+    output_images = output_image_format is not None
     if output_images:
+        try:
+            output_image_format = ImageFormat(output_image_format.lower())
+        except ValueError:
+            raise Exception(f'Unsupported image format "{output_image_format}". Use one of: {", ".join(f.value for f in ImageFormat)}.')
         output_path = get_directory(output_path)
     else:
         if not output_path.lower().endswith(".pdf"):
@@ -1491,8 +1509,14 @@ def generate_pdf(
 
         # Save the pages array as a PDF
         if output_images:
+            pillow_format = 'JPEG' if output_image_format == ImageFormat.JPG else output_image_format.value.upper()
             for index, page in enumerate(pages):
-                page.save(os.path.join(output_path, f'page{index + 1}.png'), resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
+                if output_image_format in NON_ALPHA_IMAGE_FORMATS:
+                    # Flatten onto white: these formats cannot represent the page's transparency.
+                    flattened = Image.new('RGB', page.size, (255, 255, 255))
+                    flattened.paste(page, mask=page)
+                    page = flattened
+                page.save(os.path.join(output_path, f'page{index + 1}.{output_image_format.value}'), format=pillow_format, resolution=math.floor(300 * ppi_ratio), speed=0, subsampling=0, quality=quality)
 
             print(f'Generated images: {output_path}')
 
@@ -1544,7 +1568,8 @@ def offset_images(images: List[Image.Image], x_offset: int, y_offset: int, ppi: 
             # Apply angle rotation if specified
             # Negative angle because PIL rotates counter-clockwise, but we want positive = clockwise
             if angle_offset != 0.0:
-                result = result.rotate(-angle_offset, center=(image.width / 2, image.height / 2), fillcolor='white')
+                fillcolor = (0, 0, 0, 0) if image.mode == 'RGBA' else 'white'
+                result = result.rotate(-angle_offset, center=(image.width / 2, image.height / 2), fillcolor=fillcolor)
             result_images.append(result)
         else:
             result_images.append(image)
