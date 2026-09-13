@@ -1007,6 +1007,72 @@
                         "length": "32.51mm"
                     }
                 }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 12,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "7.2mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 15,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "7.79mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 12,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "9.74mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 10,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "10.92mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 8,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "16.68mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 8,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "14.82mm"
+                    }
+                }
             }
         },
         "tabloid": {
@@ -1387,6 +1453,72 @@
                     "num_cols": 5,
                     "registration": {
                         "length": "33.53mm"
+                    }
+                }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 15,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "9.06mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 18,
+                    "num_cols": 12,
+                    "registration": {
+                        "length": "13.97mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 15,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "10.92mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 12,
+                    "num_cols": 8,
+                    "registration": {
+                        "length": "17.86mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 10,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "8.21mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "19.73mm"
                     }
                 }
             }
@@ -1771,6 +1903,72 @@
                         "length": "29.63mm"
                     }
                 }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "17.86mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 12,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "10.41mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 10,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "6.69mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 8,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "12.95mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 6,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "17.02mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 6,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "14.14mm"
+                    }
+                }
             }
         },
         "a3": {
@@ -2153,6 +2351,72 @@
                         "length": "28.19mm"
                     }
                 }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 14,
+                    "num_cols": 10,
+                    "registration": {
+                        "length": "12.7mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 18,
+                    "num_cols": 13,
+                    "registration": {
+                        "length": "8.13mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 15,
+                    "num_cols": 10,
+                    "registration": {
+                        "length": "6.69mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 12,
+                    "num_cols": 8,
+                    "registration": {
+                        "length": "12.95mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "18.03mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "14.14mm"
+                    }
+                }
             }
         },
         "arch_b": {
@@ -2533,6 +2797,72 @@
                     "num_cols": 6,
                     "registration": {
                         "length": "11.18mm"
+                    }
+                }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 16,
+                    "num_cols": 10,
+                    "registration": {
+                        "length": "8.38mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 19,
+                    "num_cols": 13,
+                    "registration": {
+                        "length": "16.09mm"
+                    }
+                }
+            },
+            "25mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 16,
+                    "num_cols": 10,
+                    "registration": {
+                        "length": "10.58mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 13,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "14.9mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 10,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "16.51mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 10,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "18.03mm"
                     }
                 }
             }
