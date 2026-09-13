@@ -51,27 +51,27 @@ Other notable card sizes include:
 
 The table below shows all possible paper and card size combinations and the layout of the cards.
 
-| Format | `letter` | `tabloid` | `a4` | `a3` | `arch_b` |
-|---|---|---|---|---|---|
-| `standard` | 4x2 (8) | 4x4 (16) | 4x2 (8) | 6x3 (18) | 6x3 (18) |
-| `poker` | 4x2 (8) | 4x4 (16) | 4x2 (8) | 4x4 (16) | 6x3 (18) |
-| `bridge` | 4x2 (8) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
-| `american_mini` | 4x4 (16) | 9x4 (36) | 4x4 (16) | 9x4 (36) | 10x4 (40) |
-| `bridge_square` | 3x4 (12) | 4x7 (28) | 3x4 (12) | 4x6 (24) | 4x7 (28) |
-| `business` | 2x5 (10) | 4x5 (20) | 2x5 (10) | 3x7 (21) | 3x8 (24) |
-| `catan` | 3x3 (9) | 7x3 (21) | 5x2 (10) | 7x3 (21) | 5x5 (25) |
-| `credit` | 2x4 (8) | 4x4 (16) | 2x5 (10) | 3x7 (21) | 3x7 (21) |
-| `domino` | 5x2 (10) | 5x4 (20) | 5x2 (10) | 8x3 (24) | 9x3 (27) |
-| `domino_square` | 4x5 (20) | 5x9 (45) | 4x5 (20) | 6x8 (48) | 6x9 (54) |
-| `euro_business` | 3x3 (9) | 3x7 (21) | 3x3 (9) | 3x7 (21) | 3x7 (21) |
-| `euro_mini` | 4x3 (12) | 9x3 (27) | 6x2 (12) | 8x4 (32) | 9x4 (36) |
-| `japanese` | 4x2 (8) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
-| `jumbo` | 2x1 (2) | 4x1 (4) | 3x1 (3) | 3x2 (6) | 3x3 (9) |
-| `micro` | 7x4 (28) | 7x9 (63) | 5x6 (30) | 11x6 (66) | 12x6 (72) |
-| `mini` | 5x3 (15) | 8x4 (32) | 4x4 (16) | 8x4 (32) | 9x4 (36) |
-| `standard_double` | 2x2 (4) | 4x2 (8) | 2x2 (4) | 3x3 (9) | 3x3 (9) |
-| `tarot` | 2x2 (4) | 5x2 (10) | 2x2 (4) | 5x2 (10) | 4x3 (12) |
-| `70mm_square` | 3x2 (6) | 5x3 (15) | 3x2 (6) | 5x3 (15) | 5x4 (20) |
+| Format | `letter` | `legal` | `tabloid` | `a4` | `a3` | `arch_b` |
+|---|---|---|---|---|---|---|
+| `standard` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 4x2 (8) | 6x3 (18) | 6x3 (18) |
+| `poker` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 4x2 (8) | 4x4 (16) | 6x3 (18) |
+| `bridge` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
+| `american_mini` | 4x4 (16) | 7x3 (21) | 9x4 (36) | 4x4 (16) | 9x4 (36) | 10x4 (40) |
+| `bridge_square` | 3x4 (12) | 5x3 (15) | 4x7 (28) | 3x4 (12) | 4x6 (24) | 4x7 (28) |
+| `business` | 2x5 (10) | 2x6 (12) | 4x5 (20) | 2x5 (10) | 3x7 (21) | 3x8 (24) |
+| `catan` | 3x3 (9) | 6x2 (12) | 7x3 (21) | 5x2 (10) | 7x3 (21) | 5x5 (25) |
+| `credit` | 2x4 (8) | 2x6 (12) | 4x4 (16) | 2x5 (10) | 3x7 (21) | 3x7 (21) |
+| `domino` | 5x2 (10) | 7x2 (14) | 5x4 (20) | 5x2 (10) | 8x3 (24) | 9x3 (27) |
+| `domino_square` | 4x5 (20) | 7x4 (28) | 5x9 (45) | 4x5 (20) | 6x8 (48) | 6x9 (54) |
+| `euro_business` | 3x3 (9) | 2x5 (10) | 3x7 (21) | 3x3 (9) | 3x7 (21) | 3x7 (21) |
+| `euro_mini` | 4x3 (12) | 4x4 (16) | 9x3 (27) | 6x2 (12) | 8x4 (32) | 9x4 (36) |
+| `japanese` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
+| `jumbo` | 2x1 (2) | 2x2 (4) | 4x1 (4) | 3x1 (3) | 3x2 (6) | 3x3 (9) |
+| `micro` | 7x4 (28) | 9x4 (36) | 7x9 (63) | 5x6 (30) | 11x6 (66) | 12x6 (72) |
+| `mini` | 5x3 (15) | 7x3 (21) | 8x4 (32) | 4x4 (16) | 8x4 (32) | 9x4 (36) |
+| `standard_double` | 2x2 (4) | 2x2 (4) | 4x2 (8) | 2x2 (4) | 3x3 (9) | 3x3 (9) |
+| `tarot` | 2x2 (4) | 4x1 (4) | 5x2 (10) | 2x2 (4) | 5x2 (10) | 4x3 (12) |
+| `70mm_square` | 3x2 (6) | 4x2 (8) | 5x3 (15) | 3x2 (6) | 5x3 (15) | 5x4 (20) |
 
 The table below shows each card size, sorted by size.
 
@@ -102,6 +102,7 @@ The table below shows each paper size, sorted by size and standard.
 | Paper size | Inches | Millimeters | Notes |
 | --- | --- | --- | --- |
 | `letter` | **8.5 x 11** | 215.9 x 279.4 | AKA `ansi_a` |
+| `legal` | **8.5 x 14** | 215.9 x 355.6 |  |
 | `tabloid` | **11 x 17** | 279.4 x 431.8 | AKA `ansi_b` |
 | `a4` | 8.268 x 11.693 | **210 x 297** |  |
 | `a3` | 11.693 x 16.535 | **297 x 420** |  |

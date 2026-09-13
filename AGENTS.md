@@ -98,7 +98,7 @@ Imported by other scripts. Not intended to be run directly.
 ### Key Script Details
 
 #### create_pdf.py
-Creates PDFs with card layouts and registration marks for cutting. Supports multiple card sizes (standard, japanese, poker, bridge, tarot, etc.) and paper sizes (letter, tabloid, a4, a3, arch_b).
+Creates PDFs with card layouts and registration marks for cutting. Supports multiple card sizes (standard, japanese, poker, bridge, tarot, etc.) and paper sizes (letter, legal, tabloid, a4, a3, arch_b).
 
 Key options:
 - `--card_size` / `--paper_size`: Card and paper dimensions

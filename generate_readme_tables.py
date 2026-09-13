@@ -12,7 +12,7 @@ def format_number(n):
 def generate_tables():
     config = load_layout_config()
 
-    paper_order = ["letter", "tabloid", "a4", "a3", "arch_b"]
+    paper_order = ["letter", "legal", "tabloid", "a4", "a3", "arch_b"]
 
     def card_size_sort_key(name):
         card = config.card_sizes[name]
