@@ -16,10 +16,43 @@
         }
     },
     "card_sizes": {
+        "1in_circle": {
+            "width": "1in",
+            "height": "1in",
+            "radius": "0.5in",
+            "shape": "circle"
+        },
+        "20mm_circle": {
+            "width": "20mm",
+            "height": "20mm",
+            "radius": "10mm",
+            "shape": "circle"
+        },
         "25mm_circle": {
             "width": "25mm",
             "height": "25mm",
             "radius": "12.5mm",
+            "shape": "circle"
+        },
+        "30mm_circle": {
+            "width": "30mm",
+            "height": "30mm",
+            "radius": "15mm",
+            "shape": "circle"
+        },
+        "39mm_circle": {
+            "width": "39mm",
+            "height": "39mm",
+            "radius": "19.5mm",
+            "shape": "circle",
+            "aliases": [
+                "poker_chip"
+            ]
+        },
+        "40mm_circle": {
+            "width": "40mm",
+            "height": "40mm",
+            "radius": "20mm",
             "shape": "circle"
         },
         "american_mini": {
@@ -535,6 +568,61 @@
                     "num_cols": 7,
                     "registration": {
                         "length": "10.92mm"
+                    }
+                }
+            },
+            "1in_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 9,
+                    "num_cols": 7,
+                    "registration": {
+                        "length": "9.06mm"
+                    }
+                }
+            },
+            "20mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 11,
+                    "num_cols": 9,
+                    "registration": {
+                        "length": "12.19mm"
+                    }
+                }
+            },
+            "30mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 7,
+                    "num_cols": 6,
+                    "registration": {
+                        "length": "19.73mm"
+                    }
+                }
+            },
+            "39mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 6,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "16.68mm"
+                    }
+                }
+            },
+            "40mm_circle": {
+                "default": {
+                    "orientation": "portrait",
+                    "version": 1,
+                    "num_rows": 6,
+                    "num_cols": 4,
+                    "registration": {
+                        "length": "14.82mm"
                     }
                 }
             }
