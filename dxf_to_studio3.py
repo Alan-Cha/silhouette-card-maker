@@ -1199,11 +1199,6 @@ def batch(unit, studio_path, action_delay, calibration_path, generate_new, dry_r
     if dry_run:
         for dxf_file in dxf_files:
             paper_size, card_size, variant = parse_dxf_filename(dxf_file.name, config) or (None, None, None)
-            # Borderless templates go in borderless/ subdirectory
-            if variant == Variant.BORDERLESS:
-                output_file = out_path / "borderless" / dxf_file.with_suffix(".studio3").name
-            else:
-                output_file = out_path / dxf_file.with_suffix(".studio3").name
             orientation = get_orientation_for_dxf(paper_size, card_size, variant, config)
             paper_w, paper_h = get_paper_dimensions(paper_size, config)
 
@@ -1213,7 +1208,7 @@ def batch(unit, studio_path, action_delay, calibration_path, generate_new, dry_r
 
             max_len = get_max_length_for_dxf(paper_size, card_size, variant, config, unit)
             len_str = f", max_length={max_len}{unit.value}" if max_len is not None else ""
-            click.echo(f"  {dxf_file.name} -> {output_file.name} ({orientation.value}, {paper_w} x {paper_h}{len_str})")
+            click.echo(f"  {dxf_file.name} ({orientation.value}, {paper_w} x {paper_h}{len_str})")
         click.echo()
         click.echo(f"Registration mark unit: {unit.value}")
         click.echo()
