@@ -897,8 +897,12 @@ def draw_outline(
         for y in y_pos:
             sx = math.floor(x * ppi_ratio)
             sy = math.floor(y * ppi_ratio)
+            # PIL draws rounded_rectangle bounds inclusive on both ends, but the card
+            # image itself occupies exactly scaled_w x scaled_h pixels starting at
+            # (sx, sy). Subtract 1 so the outline's right/bottom edge lands on the
+            # card's actual last pixel instead of one pixel past it.
             draw.rounded_rectangle(
-                [sx, sy, sx + scaled_w, sy + scaled_h],
+                [sx, sy, sx + scaled_w - 1, sy + scaled_h - 1],
                 radius=scaled_r,
                 outline='white',
                 width=1,
