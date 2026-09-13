@@ -1,3 +1,5 @@
+import json
+from collections import Counter
 from re import compile
 from enum import Enum
 from typing import Callable, Tuple
@@ -49,12 +51,50 @@ def parse_limitless(deck_text: str, handle_card: Callable) -> None:
 
     parse_deck_helper(deck_text, handle_card, is_limitless_line, extract_limitless_card_data)
 
+def parse_pkmtts(deck_text: str, handle_card: Callable) -> None:
+    # pokemoncard.io export: a JSON array of strings, one entry per physical
+    # card copy, formatted as '{set_id}-{card_no}' (plus a leading export
+    # header string, which is ignored). There's no per-line structure here,
+    # so this doesn't go through parse_deck_helper.
+    code_pattern = compile(r'^([a-zA-Z0-9]+)-(\d+)$')
+
+    try:
+        data = json.loads(deck_text)
+    except json.JSONDecodeError as e:
+        raise ValueError(f'Could not parse pkmtts export as JSON: {e}')
+
+    codes = [entry for entry in data if isinstance(entry, str) and code_pattern.match(entry)]
+    counts = Counter(codes)
+
+    error_lines = []
+    index = 0
+    for code, quantity in counts.items():
+        index = index + 1
+
+        match = code_pattern.match(code)
+        set_id = match.group(1)
+        card_no = match.group(2)
+        name = ''  # pkmtts.io export doesn't include card names
+
+        parts = [f'Index: {index}', f'quantity: {quantity}', f'set: {set_id}', f'card number: {card_no}']
+        print(', '.join(parts))
+        try:
+            handle_card(index, name, set_id, card_no, quantity)
+        except Exception as e:
+            print(f'Error: {e}')
+            error_lines.append((code, e))
+
+    if len(error_lines) > 0:
+        print(f'Errors: {error_lines}')
+
 class DeckFormat(str, Enum):
     LIMITLESS = 'limitless'
+    PKMTTS = 'pkmtts'
 
 def parse_deck(deck_text: str, format: DeckFormat, handle_card: Callable) -> None:
     if format == DeckFormat.LIMITLESS:
         return parse_limitless(deck_text, handle_card)
+    elif format == DeckFormat.PKMTTS:
+        return parse_pkmtts(deck_text, handle_card)
     else:
         raise ValueError('Unrecognized deck format.')
-
