@@ -287,12 +287,12 @@ def get_all_card_size_names(layout_config: LayoutConfig) -> List[str]:
 
 def get_all_paper_size_names(layout_config: LayoutConfig) -> List[str]:
     """Return all valid paper size names: canonical names and their aliases.
-    letter, tabloid, a4, a3, arch_b first; then alphabetical; then names starting with a digit."""
+    letter, legal, tabloid, a4, a3, arch_b first; then alphabetical; then names starting with a digit."""
     names = list(layout_config.paper_sizes.keys())
     for paper_def in layout_config.paper_sizes.values():
         if paper_def.aliases:
             names.extend(paper_def.aliases)
-    priority = ["letter", "tabloid", "a4", "a3", "arch_b"]
+    priority = ["letter", "legal", "tabloid", "a4", "a3", "arch_b"]
     priority_names = [n for n in priority if n in names]
     rest = sorted((n for n in names if n not in priority), key=lambda n: (n[0].isdigit(), n))
     return priority_names + rest

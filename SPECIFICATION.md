@@ -35,7 +35,7 @@ SCM creates print-ready PDFs and cutting templates optimized for double-sided ca
 
 All calculated layouts for supported paper and card size combinations are stored in [layouts.json](https://github.com/Alan-Cha/silhouette-card-maker/blob/main/assets/layouts.json). This file contains:
 
-- **Paper sizes**: Physical dimensions of supported paper types (letter, tabloid, A4, A3, arch_b)
+- **Paper sizes**: Physical dimensions of supported paper types (letter, legal, tabloid, A4, A3, arch_b)
 - **Card sizes**: Dimensions and corner radius for standard card types
 - **Layout configurations**: For each paper/card combination:
   - `orientation`: Page orientation (portrait or landscape)
