@@ -24,6 +24,7 @@ The following plugins are currently available:
 * [Gundam](gundam)
 * [Lorcana](lorcana)
 * [Lord of the Rings: Living Card Game](lotr_lcg)
+* [Lord of the Rings TCG](lord_of_the_rings_tcg)
 * [Netrunner](netrunner)
 * [One Piece](one_piece)
 * [Riftbound](riftbound)

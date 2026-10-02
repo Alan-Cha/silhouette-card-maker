@@ -102,6 +102,8 @@ The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **
 
 The [Lorcana]({{% ref "../plugins/lorcana" %}}) plugin supports **Dreamborn** format.
 
+The [Lord of the Rings TCG]({{% ref "../plugins/lord_of_the_rings_tcg" %}}) plugin supports **Gemp blueprint ID** and **Gemp deck link** formats.
+
 The [Netrunner]({{% ref "../plugins/netrunner" %}}) plugin supports **bbCode** and **Jinteki** formats.
 
 The [One Piece]({{% ref "../plugins/one_piece" %}}) plugin supports **Egman Events** and **OPTCG Simulator** formats.

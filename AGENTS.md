@@ -129,7 +129,7 @@ plugins/<game>/
 
 Plugins read decklists and download card images to `game/front/` (and `game/double_sided/` for double-faced cards).
 
-Supported games include: Altered, Ashes Reborn, Bushiroad, Digimon, Echoes of Astra, Elestrals, Final Fantasy, Flesh and Blood, Grand Archive, Gundam, KeyForge, Lorcana, MTG, Netrunner, One Piece, Pokemon, Riftbound, Sorcery: Contested Realm, Star Wars: Unlimited, and Yu-Gi-Oh!
+Supported games include: Altered, Ashes Reborn, Bushiroad, Digimon, Echoes of Astra, Elestrals, Final Fantasy, Flesh and Blood, Grand Archive, Gundam, KeyForge, Lorcana, Lord of the Rings TCG, MTG, Netrunner, One Piece, Pokemon, Riftbound, Sorcery: Contested Realm, Star Wars: Unlimited, and Yu-Gi-Oh!
 
 ## Development Setup
 
