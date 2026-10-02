@@ -1,0 +1,35 @@
+import sys
+from os import path
+from click import command, argument, Choice
+
+# Add parent directory to path to allow imports when run as a script
+REPO_ROOT = path.abspath(path.join(path.dirname(__file__), '..', '..'))
+sys.path.insert(0, REPO_ROOT)
+
+from plugins.gundam_ms_war.deck_formats import DeckFormat, parse_deck
+from plugins.gundam_ms_war.mswar_wiki import get_handle_card, get_handle_card_by_name
+from utilities import configure_console_encoding, ensure_directory
+
+front_directory = path.join(REPO_ROOT, 'game', 'front')
+double_sided_directory = path.join(REPO_ROOT, 'game', 'double_sided')
+
+@command()
+@argument('deck_path')
+@argument('format', type=Choice([t.value for t in DeckFormat], case_sensitive=False))
+
+def cli(deck_path: str, format: DeckFormat):
+    ensure_directory(front_directory)
+    ensure_directory(double_sided_directory)
+    if not path.isfile(deck_path):
+        print(f'{deck_path} is not a valid file.')
+        return
+
+    with open(deck_path, 'r') as deck_file:
+        deck_text = deck_file.read()
+
+        handle_card = get_handle_card_by_name(front_directory) if format == DeckFormat.NAMES else get_handle_card(front_directory)
+        parse_deck(deck_text, format, handle_card)
+
+if __name__ == '__main__':
+    configure_console_encoding()
+    cli()

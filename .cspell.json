@@ -11,6 +11,7 @@
     "astrabuilder",
     "autoblade",
     "autogenerating",
+    "bandai",
     "bbcode",
     "beleren",
     "belerensmallcaps",
@@ -45,6 +46,7 @@
     "golos",
     "gundam",
     "hallofbeorn",
+    "heero",
     "hextra",
     "hololive",
     "hugo",
@@ -95,7 +97,8 @@
     "warhammer",
     "ydke",
     "ygoprodeck",
-    "yugioh"
+    "yugioh",
+    "zeon"
   ],
   "ignorePaths": [
     "node_modules",

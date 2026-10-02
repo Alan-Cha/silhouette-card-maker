@@ -139,6 +139,8 @@ The [Grand Archive plugin](plugins/grand_archive/README.md) supports **Omnideck*
 
 The [Gundam plugin](plugins/gundam/README.md) supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.
 
+The [Gundam M.S. War plugin](plugins/gundam_ms_war/README.md) supports a plain **text** format (quantity and card number) for the 2001 Gundam Wing-era game.
+
 The [KeyForge plugin](plugins/keyforge/README.md) supports **Master Vault** (including **Decks of KeyForge** links) and **Archon Arcana** formats.
 
 The [Lord of the Rings: Living Card Game plugin](plugins/lotr_lcg/README.md) supports **RingsDB decklists**, **RingsDB fellowships**, and **RingsDB scenarios**, using user-supplied local back scans.
