@@ -96,6 +96,8 @@ The [Final Fantasy]({{% ref "../plugins/final_fantasy" %}}) plugin supports **OC
 
 The [Flesh and Blood]({{% ref "../plugins/flesh_and_blood" %}}) plugin supports **Fabrary** format.
 
+The [A Game of Thrones: The Card Game]({{% ref "../plugins/game_of_thrones_lcg" %}}) plugin supports **ThronesDB** format.
+
 The [Grand Archive]({{% ref "../plugins/grand_archive" %}}) plugin supports **Omnideck** format.
 
 The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.

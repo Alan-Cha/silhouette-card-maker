@@ -20,6 +20,7 @@ The following plugins are currently available:
 * [Elestrals](elestrals)
 * [Final Fantasy](final_fantasy)
 * [Flesh and Blood](flesh_and_blood)
+* [A Game of Thrones: The Card Game](game_of_thrones_lcg)
 * [Grand Archive](grand_archive)
 * [Gundam](gundam)
 * [Lorcana](lorcana)
