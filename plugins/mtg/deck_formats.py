@@ -125,6 +125,41 @@ def parse_mtgo(deck_text, handle_card: Callable) -> None:
 
     parse_deck_helper(deck_text, is_mtgo_card_line, extract_mtgo_card_data, handle_card)
 
+# <?xml version="1.0" encoding="utf-8"?>
+# <Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+#   <NetDeckID>0</NetDeckID>
+#   <PreconstructedDeckID>0</PreconstructedDeckID>
+#   <Cards CatID="12345" Quantity="4" Sideboard="false" Name="Lightning Bolt" Annotation="0" />
+#   <Cards CatID="67890" Quantity="2" Sideboard="true" Name="Pyroblast" Annotation="0" />
+# </Deck>
+#
+# Sideboard cards are fetched too, matching the other text formats.
+def parse_dek(deck_text, handle_card: Callable) -> None:
+    # Malformed XML raises ET.ParseError to the caller instead of silently fetching nothing.
+    root = ET.fromstring(deck_text.strip())
+
+    error_lines = []
+
+    index = 0
+    for card in root.iter('Cards'):
+        name = card.get('Name', '').strip()
+        quantity = card.get('Quantity', '')
+        if not name or not quantity:
+            print(f'Skipping: {card.attrib}')
+            continue
+
+        index += 1
+        sideboard = card.get('Sideboard', '').lower() == 'true'
+        print(f'Index: {index}, quantity: {quantity}, name: {name}' + (' (sideboard)' if sideboard else ''))
+        try:
+            handle_card(index, name, "", "", int(quantity))
+        except Exception as e:
+            print(f'Error: {e}')
+            error_lines.append((name, e))
+
+    if len(error_lines) > 0:
+        print(f'Errors: {error_lines}')
+
 # 1x Agadeem's Awakening // Agadeem, the Undercrypt (znr) 90 [Resilience,Land]
 # 1x Ancient Cornucopia (big) 16 [Maybeboard{noDeck}{noPrice},Mana Advantage]
 # 1x Arachnogenesis (cmm) 647 [Maybeboard{noDeck}{noPrice},Mass Disruption]
@@ -457,6 +492,7 @@ class DeckFormat(str, Enum):
     ARCHIDEKT = "archidekt"
     CUBECOBRA_CSV = "cubecobra_csv"
     DECKSTATS = "deckstats"
+    DEK = "dek"
     MOXFIELD = "moxfield"
     MPCFILL_XML = "mpcfill_xml"
     MTGA = "mtga"
@@ -472,6 +508,8 @@ def parse_deck(deck_text: str, format: DeckFormat, handle_card: Callable, front_
         parse_mtga(deck_text, handle_card)
     elif format == DeckFormat.MTGO:
         parse_mtgo(deck_text, handle_card)
+    elif format == DeckFormat.DEK:
+        parse_dek(deck_text, handle_card)
     elif format == DeckFormat.ARCHIDEKT:
         parse_archidekt(deck_text, handle_card)
     elif format == DeckFormat.DECKSTATS:
