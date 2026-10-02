@@ -102,6 +102,8 @@ The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **
 
 The [Lorcana]({{% ref "../plugins/lorcana" %}}) plugin supports **Dreamborn** format.
 
+The [Middle-earth CCG]({{% ref "../plugins/middle_earth_ccg" %}}) plugin supports **Cardnum** format, including **GCCG** deck files.
+
 The [Netrunner]({{% ref "../plugins/netrunner" %}}) plugin supports **bbCode** and **Jinteki** formats.
 
 The [One Piece]({{% ref "../plugins/one_piece" %}}) plugin supports **Egman Events** and **OPTCG Simulator** formats.
