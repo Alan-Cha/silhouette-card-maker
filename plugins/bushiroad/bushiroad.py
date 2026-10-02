@@ -7,7 +7,10 @@ from re import sub
 from unicodedata import normalize, category
 from enum import Enum
 
-DECK_API_URL = 'https://decklog-en.bushiroad.com/system/app/api/view/{deck_code}'
+# Deck Log host: 'decklog-en' (English) or 'decklog' (Japanese).
+# The same deck code refers to different decks on each host.
+DEFAULT_HOST = 'decklog-en'
+DECK_API_URL = 'https://{host}.bushiroad.com/system/app/api/view/{deck_code}'
 
 session = Session()
 
@@ -18,20 +21,40 @@ class GameTitle(str, Enum):
     GODZILLA = 'Godzilla'
     HOLOLIVE = 'Hololive'
 
+# Game title IDs and image hosts differ between the English and Japanese Deck Log
+# (see https://decklog-en.bushiroad.com/conf/const.js and https://decklog.bushiroad.com/conf/const.js)
 game_title_id_mapping = {
-    '1': GameTitle.CARDFIGHT_VANGUARD,
-    '2': GameTitle.WEISS_SCHWARZ,
-    '6': GameTitle.SHADOWVERSE_EVOLVE,
-    '7': GameTitle.GODZILLA,
-    '8': GameTitle.HOLOLIVE,
+    'decklog-en': {
+        '1': GameTitle.CARDFIGHT_VANGUARD,
+        '2': GameTitle.WEISS_SCHWARZ,
+        '6': GameTitle.SHADOWVERSE_EVOLVE,
+        '7': GameTitle.GODZILLA,
+        '8': GameTitle.HOLOLIVE,
+    },
+    'decklog': {
+        '1': GameTitle.CARDFIGHT_VANGUARD,
+        '2': GameTitle.WEISS_SCHWARZ,
+        '6': GameTitle.SHADOWVERSE_EVOLVE,
+        '9': GameTitle.HOLOLIVE,
+        '13': GameTitle.GODZILLA,
+    },
 }
 
 game_image_url_mapping = {
-    GameTitle.CARDFIGHT_VANGUARD: 'https://en.cf-vanguard.com/wordpress/wp-content/images/cardlist/{card_image}',
-    GameTitle.WEISS_SCHWARZ: 'https://en.ws-tcg.com/wordpress/wp-content/images/cardimages/{card_image}',
-    GameTitle.SHADOWVERSE_EVOLVE: 'https://en.shadowverse-evolve.com/wordpress/wp-content/images/cardlist/{card_image}',
-    GameTitle.GODZILLA: 'https://en.godzilla-cardgame.com/wordpress/wp-content/images/cardlist/{card_image}',
-    GameTitle.HOLOLIVE: 'https://en.hololive-official-cardgame.com/wp-content/images/cardlist/{card_image}'
+    'decklog-en': {
+        GameTitle.CARDFIGHT_VANGUARD: 'https://en.cf-vanguard.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.WEISS_SCHWARZ: 'https://en.ws-tcg.com/wordpress/wp-content/images/cardimages/{card_image}',
+        GameTitle.SHADOWVERSE_EVOLVE: 'https://en.shadowverse-evolve.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.GODZILLA: 'https://en.godzilla-cardgame.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.HOLOLIVE: 'https://en.hololive-official-cardgame.com/wp-content/images/cardlist/{card_image}'
+    },
+    'decklog': {
+        GameTitle.CARDFIGHT_VANGUARD: 'https://cf-vanguard.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.WEISS_SCHWARZ: 'https://ws-tcg.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.SHADOWVERSE_EVOLVE: 'https://shadowverse-evolve.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.GODZILLA: 'https://godzilla-cardgame.com/wordpress/wp-content/images/cardlist/{card_image}',
+        GameTitle.HOLOLIVE: 'https://hololive-official-cardgame.com/wp-content/images/cardlist/{card_image}'
+    },
 }
 
 def request_bushiroad(query: str, referer: str = '') -> Response:
@@ -47,18 +70,21 @@ def request_bushiroad(query: str, referer: str = '') -> Response:
 
     return r
 
-def resolve_image_url(game_title: GameTitle, card_image: str) -> str:
-    image_url_template = game_image_url_mapping.get(game_title)
+def resolve_image_url(game_title: GameTitle, card_image: str, host: str = DEFAULT_HOST) -> str:
+    image_url_template = game_image_url_mapping.get(host, {}).get(game_title)
     if image_url_template is None:
         raise ValueError(f'Unsupported game title: {game_title}')
     return image_url_template.format(card_image=card_image)
 
-def fetch_decklist(deck_code: str):
-    deck_request = request_bushiroad(DECK_API_URL.format(deck_code=deck_code), 'https://decklog-en.bushiroad.com/')
+def fetch_decklist(deck_code: str, host: str = DEFAULT_HOST):
+    if host not in game_title_id_mapping:
+        raise ValueError(f'Unsupported Deck Log host: {host}')
+
+    deck_request = request_bushiroad(DECK_API_URL.format(host=host, deck_code=deck_code), f'https://{host}.bushiroad.com/')
     json = deck_request.json()
 
     game_title_id = str(json.get('game_title_id'))
-    game_title = game_title_id_mapping.get(game_title_id)
+    game_title = game_title_id_mapping[host].get(game_title_id)
     if game_title is None:
         raise ValueError(f'Unsupported game title ID: {game_title_id}')
 
