@@ -16,6 +16,7 @@ The following plugins are currently available:
 * [Ashes Reborn](ashes_reborn)
 * [Bushiroad](bushiroad)
 * [Digimon](digimon)
+* [Doomtown: Reloaded](doomtown_reloaded)
 * [Echoes of Astra](echoes_of_astra)
 * [Elestrals](elestrals)
 * [Final Fantasy](final_fantasy)
