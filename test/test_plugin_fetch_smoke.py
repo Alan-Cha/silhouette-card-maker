@@ -15,6 +15,7 @@ from click.testing import CliRunner
 
 # List of all plugins with their fetch modules and supported formats
 PLUGINS = [
+    ('alpha_clash', 'plugins.alpha_clash.fetch', ['deckplanet']),
     ('altered', 'plugins.altered.fetch', ['ajordat']),
     ('arkham_horror_lcg', 'plugins.arkham_horror_lcg.fetch', ['arkhamdb_json']),
     ('ashes_reborn', 'plugins.ashes_reborn.fetch', ['ashes']),

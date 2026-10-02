@@ -117,6 +117,8 @@ The [Pokemon plugin](plugins/pokemon/README.md) supports **Limitless TCG** forma
 
 The [Yu-Gi-Oh! plugin](plugins/yugioh/README.md) supports **YDK** and **YDKE** formats.
 
+The [Alpha Clash plugin](plugins/alpha_clash/README.md) supports **DeckPlanet** format.
+
 The [Altered plugin](plugins/altered/README.md) supports **Ajordat** format.
 
 The [Arkham Horror: The Card Game plugin](plugins/arkham_horror_lcg/README.md) supports **ArkhamDB** format.

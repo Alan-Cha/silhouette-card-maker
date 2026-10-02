@@ -80,6 +80,8 @@ The [Pokemon]({{% ref "../plugins/pokemon" %}}) plugin supports **Limitless TCG*
 
 The [Yu-Gi-Oh!]({{% ref "../plugins/yugioh" %}}) plugin supports **YDK** and **YDKE** formats.
 
+The [Alpha Clash]({{% ref "../plugins/alpha_clash" %}}) plugin supports **DeckPlanet** format.
+
 The [Altered]({{% ref "../plugins/altered" %}}) plugin supports **Ajordat** format.
 
 The [Ashes Reborn]({{% ref "../plugins/ashes_reborn" %}}) plugin supports **Ashes** and **Ashes DB** formats.
