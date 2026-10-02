@@ -35,6 +35,7 @@ PLUGINS = [
     ('pokemon', 'plugins.pokemon.fetch', ['limitless']),
     ('riftbound', 'plugins.riftbound.fetch', ['riftbound']),
     ('sorcery_contested_realm', 'plugins.sorcery_contested_realm.fetch', ['curiosa']),
+    ('star_trek_ccg', 'plugins.star_trek_ccg.fetch', ['lackey', 'trekcc']),
     ('star_wars_unlimited', 'plugins.star_wars_unlimited.fetch', ['swudb']),
     ('yugioh', 'plugins.yugioh.fetch', ['ydk']),
 ]

@@ -28,4 +28,5 @@ The following plugins are currently available:
 * [One Piece](one_piece)
 * [Riftbound](riftbound)
 * [Sorcery: Contested Realm](sorcery_contested_realm)
+* [Star Trek CCG](star_trek_ccg)
 * [Star Wars Unlimited](star_wars_unlimited)
