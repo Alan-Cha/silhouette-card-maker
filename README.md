@@ -155,6 +155,8 @@ The [Sorcery: Contested Realm plugin](plugins/sorcery_contested_realm/README.md)
 
 The [Star Wars Unlimited plugin](plugins/star_wars_unlimited/README.md) supports **Melee**, **Picklist**, and **SWUDB** formats.
 
+The [Union Arena plugin](plugins/union_arena/README.md) supports **ExBurst** and plain **text** formats.
+
 ## create_pdf.py
 `create_pdf.py` is a CLI tool that layouts your card images into a PDF with registration marks that can be cut out with the appropriate cutting template in [`cutting_templates/`](cutting_templates/).
 
