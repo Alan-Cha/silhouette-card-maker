@@ -29,3 +29,4 @@ The following plugins are currently available:
 * [Riftbound](riftbound)
 * [Sorcery: Contested Realm](sorcery_contested_realm)
 * [Star Wars Unlimited](star_wars_unlimited)
+* [Star Wars: The Card Game](star_wars_lcg)
