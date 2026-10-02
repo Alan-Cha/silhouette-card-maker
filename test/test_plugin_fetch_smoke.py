@@ -27,6 +27,7 @@ PLUGINS = [
     ('grand_archive', 'plugins.grand_archive.fetch', ['gatcg']),
     ('gundam', 'plugins.gundam.fetch', ['gundam']),
     ('keyforge', 'plugins.keyforge.fetch', ['archon_arcana']),
+    ('legend_of_the_five_rings_lcg', 'plugins.legend_of_the_five_rings_lcg.fetch', ['emeralddb_json']),
     ('lorcana', 'plugins.lorcana.fetch', ['lorcast']),
     ('lotr_lcg', 'plugins.lotr_lcg.fetch', ['ringsdb_url', 'ringsdb_fellowship_url', 'ringsdb_scenario_url', 'hallofbeorn_url']),
     ('mtg', 'plugins.mtg.fetch', ['moxfield', 'archidekt', 'text']),

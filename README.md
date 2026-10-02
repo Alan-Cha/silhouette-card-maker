@@ -141,6 +141,8 @@ The [Gundam plugin](plugins/gundam/README.md) supports **DeckPlanet**, **Egman E
 
 The [KeyForge plugin](plugins/keyforge/README.md) supports **Master Vault** (including **Decks of KeyForge** links) and **Archon Arcana** formats.
 
+The [Legend of the Five Rings: The Card Game plugin](plugins/legend_of_the_five_rings_lcg/README.md) supports **EmeraldDB** format.
+
 The [Lord of the Rings: Living Card Game plugin](plugins/lotr_lcg/README.md) supports **RingsDB decklists**, **RingsDB fellowships**, and **RingsDB scenarios**, using user-supplied local back scans.
 
 The [Lorcana plugin](plugins/lorcana/README.md) supports **Dreamborn** format.
