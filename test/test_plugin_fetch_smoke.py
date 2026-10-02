@@ -20,6 +20,7 @@ PLUGINS = [
     ('ashes_reborn', 'plugins.ashes_reborn.fetch', ['ashes']),
     ('bushiroad', 'plugins.bushiroad.fetch', ['bushiroad']),
     ('digimon', 'plugins.digimon.fetch', ['digimon']),
+    ('dragon_ball_super_fusion_world', 'plugins.dragon_ball_super_fusion_world.fetch', ['fusionworld', 'deckplanet']),
     ('echoes_of_astra', 'plugins.echoes_of_astra.fetch', ['astra_url']),
     ('elestrals', 'plugins.elestrals.fetch', ['elestrals']),
     ('final_fantasy', 'plugins.final_fantasy.fetch', ['fftcg']),
