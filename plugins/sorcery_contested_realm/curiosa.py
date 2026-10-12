@@ -33,7 +33,7 @@ def get_curiosa_decklist(deck_id: str):
     params = {'batch': '1', 'input': dumps(deck_payload)}
     headers = {'referer': CURIOSA_REFERER}
 
-    r = get(api_url, params=params, headers=headers)
+    r = session.get(api_url, params=params, headers=headers)
 
     # Check for 2XX response code
     r.raise_for_status()
@@ -47,7 +47,7 @@ def get_curiosa_decklist(deck_id: str):
     return decklist
 
 def request_curiosa(url: str):
-    r = get(url)
+    r = session.get(url)
 
     # Check for 2XX response code
     r.raise_for_status()
