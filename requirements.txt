@@ -2,13 +2,13 @@ click==8.4.2
 cloudscraper==1.2.71
 ezdxf==1.4.4
 filetype==1.2.0
-matplotlib==3.11.1
+matplotlib==3.11.2
 mtg_parser==0.0.1a55
 natsort==8.4.0
 numpy==2.5.2
 pillow==12.3.0
 pyautogui==0.9.54
-pydantic==2.13.4
+pydantic==2.14.1
 pywinauto==0.6.9
 pypdfium2==5.12.1
 requests==2.34.2
