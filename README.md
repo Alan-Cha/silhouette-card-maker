@@ -488,6 +488,33 @@ python offset_pdf.py --pdf_path calibration/letter-calibration.pdf --x_offset 35
 
 Print this out and the center set of front and back squares, (0, 0), should be aligned.
 
+### Cut-based calibration
+
+If you have a cutting machine, you can determine your offset by cutting instead of holding the sheet up to a light. `generate_calibration_cut.py` produces `<paper size>-calibration-cut.pdf` and `<paper size>-calibration-cut.dxf` for every configured paper size.
+
+`<paper size>-calibration-cut.pdf` has a front page of registration marks and a grid of black-ringed 10mm circles, and a back page with the same grid, except each circle is nudged by a unique offset (in the same pixel units as `--x_offset`/`--y_offset`) with that offset printed in red inside the ring.
+
+Print `<paper size>-calibration-cut.pdf` double-sided with long-side flip using the card stock you plan to use. Convert the matching `<paper size>-calibration-cut.dxf` with `dxf_to_studio3.py` and cut it with your machine, guided by the front page's registration marks. The registration mark length varies by paper size (it's maximized for that sheet's margins, the same way `generate_dxf.py` reports `max_length`), so pass the matching `--reg_length` below — using the wrong length will make Silhouette Studio look for marks of the wrong size and misalign the cut:
+
+| Paper size | `--reg_length` |
+| --- | --- |
+| `letter` | 7.2 |
+| `legal` | 9.57 |
+| `tabloid` | 8.21 |
+| `a4` | 8.38 |
+| `a3` | 7.96 |
+| `arch_b` | 9.65 |
+
+```sh
+python dxf_to_studio3.py single calibration/letter-calibration-cut.dxf calibration/letter-calibration-cut.studio3 --paper_size letter --registration --unit mm --reg_length 7.2 --reg_thickness 1 --reg_inset 10
+```
+
+If you regenerate these sheets yourself with `python generate_calibration_cut.py`, it prints the exact `--reg_length`/`--reg_thickness`/`--reg_inset` to use for whatever paper size it just generated.
+
+Once cut, flip over each individual disc. The disc whose red offset text and ring end up centered on the physical cut edge tells you your true offset — plug that value directly into `--x_offset`/`--y_offset`.
+
+The [Large offset](#large-offset) and [Save Offset](#save-offset) workflows above work with this sheet too; just point `--pdf_path` at `calibration/<paper size>-calibration-cut.pdf` instead.
+
 ### Save Offset
 
 You can save your x, y, and angle offset with the `--save` option. After saving your offset, it'll be automatically applied every time you run `offset_pdf.py`. You can override the loaded offset using `--x_offset`, `--y_offset`, and `--angle`.
