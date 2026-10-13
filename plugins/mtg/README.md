@@ -234,6 +234,10 @@ SIDEBOARD:
 </order>
 ```
 
+Fronts go in [game/front](../../game/front/) and any card-specific `<backs>` go in [game/double_sided](../../game/double_sided/).
+
+The order's `<cardback>` is the shared back for every slot without its own entry in `<backs>`. It is saved to [game/back](../../game/back/) as `mpcfill_cardback`, so select that file when [`create_pdf.py`](../../README.md#create_pdfpy) asks which card back to use. A later `mpcfill_xml` fetch replaces it and leaves your other card backs alone.
+
 ### `mtga`
 
 Magic: The Gathering Arena format.
