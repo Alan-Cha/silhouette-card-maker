@@ -135,6 +135,8 @@ The [Final Fantasy plugin](plugins/final_fantasy/README.md) supports **OCTGN**, 
 
 The [Flesh and Blood plugin](plugins/flesh_and_blood/README.md) supports **Fabrary** format.
 
+The [Force of Will plugin](plugins/force_of_will/README.md) supports **Force of Will** format.
+
 The [Grand Archive plugin](plugins/grand_archive/README.md) supports **Omnideck** format.
 
 The [Gundam plugin](plugins/gundam/README.md) supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.

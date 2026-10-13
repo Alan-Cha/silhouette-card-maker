@@ -96,6 +96,8 @@ The [Final Fantasy]({{% ref "../plugins/final_fantasy" %}}) plugin supports **OC
 
 The [Flesh and Blood]({{% ref "../plugins/flesh_and_blood" %}}) plugin supports **Fabrary** format.
 
+The [Force of Will]({{% ref "../plugins/force_of_will" %}}) plugin supports **Force of Will** format.
+
 The [Grand Archive]({{% ref "../plugins/grand_archive" %}}) plugin supports **Omnideck** format.
 
 The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.

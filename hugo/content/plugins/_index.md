@@ -20,6 +20,7 @@ The following plugins are currently available:
 * [Elestrals](elestrals)
 * [Final Fantasy](final_fantasy)
 * [Flesh and Blood](flesh_and_blood)
+* [Force of Will](force_of_will)
 * [Grand Archive](grand_archive)
 * [Gundam](gundam)
 * [Lorcana](lorcana)

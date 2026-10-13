@@ -24,6 +24,7 @@ PLUGINS = [
     ('elestrals', 'plugins.elestrals.fetch', ['elestrals']),
     ('final_fantasy', 'plugins.final_fantasy.fetch', ['fftcg']),
     ('flesh_and_blood', 'plugins.flesh_and_blood.fetch', ['fab']),
+    ('force_of_will', 'plugins.force_of_will.fetch', ['fow']),
     ('grand_archive', 'plugins.grand_archive.fetch', ['gatcg']),
     ('gundam', 'plugins.gundam.fetch', ['gundam']),
     ('keyforge', 'plugins.keyforge.fetch', ['archon_arcana']),
