@@ -95,7 +95,7 @@ def fetch_card(
             # Align the rotated art so that it has the correct orientation
             front_image_for_rotation = Image.open(front_image_path)
             if front_image_for_rotation.height < front_image_for_rotation.width:
-                front_image_rotated = front_image_for_rotation.rotate(90, expand=True)
+                front_image_rotated = front_image_for_rotation.rotate(-90, expand=True)
                 front_image_rotated.save(front_image_path)
 
         if back_art != None:
@@ -107,7 +107,7 @@ def fetch_card(
             # Align the rotated art so that it has the correct orientation
             back_image_for_rotation = Image.open(back_image_path)
             if back_image_for_rotation.height < back_image_for_rotation.width:
-                back_image_rotated = back_image_for_rotation.rotate(90, expand=True)
+                back_image_rotated = back_image_for_rotation.rotate(-90, expand=True)
                 back_image_rotated.save(back_image_path)
 
 def get_handle_card(
