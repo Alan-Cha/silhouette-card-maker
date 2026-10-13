@@ -7,10 +7,16 @@ REPO_ROOT = path.abspath(path.join(path.dirname(__file__), '..', '..'))
 sys.path.insert(0, REPO_ROOT)
 
 from plugins.pokemon.deck_formats import DeckFormat, parse_deck
-from plugins.pokemon.limitless import get_handle_card
-from utilities import configure_console_encoding, ensure_directory
+from plugins.pokemon.limitless import get_handle_card as get_limitless_handle_card
+from plugins.pokemon.pkmtts import get_handle_card as get_pkmtts_handle_card
+from utilities import ensure_directory
 
 front_directory = path.join(REPO_ROOT, 'game', 'front')
+
+HANDLE_CARD_GETTERS = {
+    DeckFormat.LIMITLESS: get_limitless_handle_card,
+    DeckFormat.PKMTTS: get_pkmtts_handle_card,
+}
 
 @command()
 @argument('deck_path')
@@ -22,11 +28,12 @@ def cli(deck_path: str, format: DeckFormat):
         print(f'{deck_path} is not a valid file.')
         return
 
+    get_handle_card = HANDLE_CARD_GETTERS[format]
+
     with open(deck_path, 'r') as deck_file:
         deck_text = deck_file.read()
 
         parse_deck(deck_text, format, get_handle_card(front_directory))
 
 if __name__ == '__main__':
-    configure_console_encoding()
     cli()
