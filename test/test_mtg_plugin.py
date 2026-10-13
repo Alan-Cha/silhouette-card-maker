@@ -2,12 +2,14 @@
 Tests for the MTG plugin.
 Tests deck format parsing and image fetching from Scryfall.
 """
+import builtins
 import os
 import shutil
 import tempfile
 import warnings
 import pytest
 import requests
+from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
 
 from plugins.mtg.deck_formats import (
@@ -1652,3 +1654,78 @@ class TestMPCFillFetcher:
         assert mock_request.call_count == 3
         assert [p.name for p in front.iterdir()] == []
         assert '404 Client Error' in capsys.readouterr().out
+
+
+class TestDecklistEncoding:
+    """Test that decklists are read as UTF-8 regardless of the locale encoding."""
+
+    # The Japanese artist credit and em dash from a real MPCFill order. The 0x81
+    # byte inside these characters is unmapped in cp1252.
+    NON_ASCII_NAME = 'Aettir and Priwen [FIN] (七原しえ—SHIE NANAHARA).png'
+
+    def write_deck(self, tmp_path, encoding='utf-8'):
+        deck_path = tmp_path / 'deck.xml'
+        deck_path.write_text(
+            make_mpcfill_xml(1, [('front_id', '0', self.NON_ASCII_NAME)]),
+            encoding=encoding,
+        )
+        return deck_path
+
+    def run_fetch(self, deck_path, default_encoding=None):
+        """
+        Invoke the fetch CLI, optionally forcing open()'s default text encoding.
+
+        Patching the locale is not enough: open() resolves its default encoding
+        in C, so a test on a UTF-8 machine would pass either way. Replacing the
+        builtin is what actually reproduces Windows here.
+        """
+        from plugins.mtg import fetch
+
+        real_open = builtins.open
+
+        def locale_open(file, mode='r', buffering=-1, encoding=None, *args, **kwargs):
+            if 'b' not in mode and encoding is None:
+                encoding = default_encoding
+            return real_open(file, mode, buffering, encoding, *args, **kwargs)
+
+        with patch.object(fetch, 'MPCFillFetcher') as mock_fetcher:
+            if default_encoding is not None:
+                with patch('builtins.open', locale_open):
+                    result = CliRunner().invoke(fetch.cli, [str(deck_path), 'mpcfill_xml'])
+            else:
+                result = CliRunner().invoke(fetch.cli, [str(deck_path), 'mpcfill_xml'])
+
+        return result, mock_fetcher.return_value
+
+    def test_reads_non_ascii_decklist_under_cp1252_locale(self, tmp_path):
+        """A cp1252 default encoding must not crash on non-ASCII card names.
+
+        Windows defaults to cp1252, which raised
+        UnicodeDecodeError: 'charmap' codec can't decode byte 0x81.
+        """
+        deck_path = self.write_deck(tmp_path)
+
+        result, fetcher = self.run_fetch(deck_path, default_encoding='cp1252')
+
+        assert result.exit_code == 0, result.output
+        fetcher.collect_slot.assert_called_once()
+        assert fetcher.collect_slot.call_args.args[2] == 'Aettir and Priwen [FIN] (七原しえ—SHIE NANAHARA)'
+
+    def test_strips_byte_order_mark(self, tmp_path):
+        """A BOM from a Windows exporter must not be glued to the first card name.
+
+        ElementTree tolerates a leading BOM, so this only bites the text formats,
+        where the first line is a card rather than markup.
+        """
+        from plugins.mtg import fetch
+
+        deck_path = tmp_path / 'deck.txt'
+        deck_path.write_text('Sol Ring\nArid Mesa', encoding='utf-8-sig')
+
+        handle_card = MagicMock()
+        with patch.object(fetch, 'scryfall_get_handle_card', return_value=handle_card):
+            result = CliRunner().invoke(fetch.cli, [str(deck_path), 'simple'])
+
+        assert result.exit_code == 0, result.output
+        parsed_names = [call.args[1] for call in handle_card.call_args_list]
+        assert parsed_names == ['Sol Ring', 'Arid Mesa']

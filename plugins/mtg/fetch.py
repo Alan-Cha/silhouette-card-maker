@@ -58,7 +58,12 @@ def cli(
             print(f'{deck_path} is not a valid file.')
             return
 
-        with open(deck_path, 'r') as deck_file:
+        # Decklists are UTF-8. Without an explicit encoding, Python falls back to
+        # the locale encoding, which is cp1252 on Windows and cannot decode card
+        # names with non-ASCII characters. utf-8-sig also drops the byte order
+        # mark that Windows exporters add, which would otherwise end up glued to
+        # the first line of the decklist.
+        with open(deck_path, 'r', encoding='utf-8-sig') as deck_file:
             deck_text = deck_file.read()
 
     mpcfill_fetcher = None
