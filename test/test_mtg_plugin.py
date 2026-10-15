@@ -2,11 +2,14 @@
 Tests for the MTG plugin.
 Tests deck format parsing and image fetching from Scryfall.
 """
+import builtins
 import os
 import shutil
 import tempfile
+import warnings
 import pytest
 import requests
+from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
 
 from plugins.mtg.deck_formats import (
@@ -19,8 +22,11 @@ from plugins.mtg.deck_formats import (
     parse_deckstats,
     parse_moxfield,
     parse_scryfall_json,
+    parse_mpcfill_xml,
+    extract_mpcfill_cardback_id,
 )
 from plugins.mtg.common import ScryfallLanguage, to_scryfall_api_lang
+from plugins.mtg.mpcfill import CARDBACK_STEM, MPCFillFetcher, write_image
 from plugins.mtg.scryfall import request_scryfall, get_handle_card, fetch_card, fetch_printings, build_image_url, fetch_image
 from typing import List
 from plugins.mtg.patterns import MOXFIELD_PATTERN, DECKSTATS_PATTERN
@@ -1364,3 +1370,362 @@ class TestUniverseBeyondFiltering:
         # Fallback: should still return printings rather than an empty list
         assert len(printings) > 0
         assert any(p['set'] == 'acr' for p in printings)
+
+
+# --- MPCFill XML ---
+
+# Minimal byte blobs whose magic numbers are enough for guess_extension() to sniff.
+PNG_BYTES = b'\x89PNG\r\n\x1a\n' + b'\x00' * 32
+JPG_BYTES = b'\xff\xd8\xff\xe0' + b'\x00' * 32
+
+
+def make_mpcfill_xml(quantity, fronts, backs=None, cardback=None):
+    """Build an MPCFill order from (card_id, slots, name) tuples."""
+    def cards(entries):
+        return ''.join(
+            f'<card><id>{card_id}</id><slots>{slots}</slots><name>{name}</name></card>'
+            for card_id, slots, name in entries
+        )
+
+    xml = f'<order><details><quantity>{quantity}</quantity></details>'
+    xml += f'<fronts>{cards(fronts)}</fronts>'
+    if backs is not None:
+        xml += f'<backs>{cards(backs)}</backs>'
+    if cardback is not None:
+        xml += f'<cardback>{cardback}</cardback>'
+    return xml + '</order>'
+
+
+class TestMPCFillXmlParsing:
+    """Test slot assignment when parsing MPCFill orders."""
+
+    def test_expands_multi_slot_cards_and_uses_one_based_slots(self):
+        """A card listed for several slots yields one call per slot, numbered from 1."""
+        deck_text = make_mpcfill_xml(3, [
+            ('island_id', '0,2', 'Island [DFT].png'),
+            ('sol_ring_id', '1', 'Sol Ring.jpg'),
+        ])
+
+        parsed_slots = []
+        def collect_slot(slot, front_id, front_name, back_id, back_name):
+            parsed_slots.append((slot, front_id, front_name, back_id, back_name))
+
+        parse_mpcfill_xml(deck_text, collect_slot)
+
+        assert parsed_slots == [
+            (1, 'island_id', 'Island [DFT]', None, None),
+            (2, 'sol_ring_id', 'Sol Ring', None, None),
+            (3, 'island_id', 'Island [DFT]', None, None),
+        ]
+
+    def test_assigns_backs_to_their_slots_only(self):
+        """Only slots listed in <backs> get a back; the rest stay None."""
+        deck_text = make_mpcfill_xml(
+            2,
+            [('front_a', '0', 'Alrund.jpg'), ('front_b', '1', 'Sol Ring.jpg')],
+            backs=[('back_a', '0', 'Hakka.jpg')],
+        )
+
+        parsed_slots = []
+        def collect_slot(slot, front_id, front_name, back_id, back_name):
+            parsed_slots.append((slot, back_id, back_name))
+
+        parse_mpcfill_xml(deck_text, collect_slot)
+
+        assert parsed_slots == [(1, 'back_a', 'Hakka'), (2, None, None)]
+
+    def test_empty_backs_element_is_not_an_error(self):
+        """An empty <backs></backs> parses without relying on Element truthiness."""
+        deck_text = make_mpcfill_xml(1, [('front_a', '0', 'Sol Ring.jpg')], backs=[])
+
+        parsed_slots = []
+        with warnings.catch_warnings():
+            # Element truthiness is deprecated; this must not depend on it.
+            warnings.simplefilter('error', DeprecationWarning)
+            parse_mpcfill_xml(deck_text, lambda *args: parsed_slots.append(args))
+
+        assert len(parsed_slots) == 1
+
+    def test_missing_fronts_raises(self):
+        """An order with no <fronts> is not usable."""
+        deck_text = '<order><details><quantity>1</quantity></details></order>'
+
+        with pytest.raises(ValueError):
+            parse_mpcfill_xml(deck_text, lambda *args: None)
+
+    def test_skips_slot_with_no_front(self, capsys):
+        """A slot no front claims is warned about and skipped."""
+        deck_text = make_mpcfill_xml(2, [('front_a', '0', 'Sol Ring.jpg')])
+
+        parsed_slots = []
+        parse_mpcfill_xml(deck_text, lambda slot, *args: parsed_slots.append(slot))
+
+        assert parsed_slots == [1]
+        assert 'Slot 2 has no front image' in capsys.readouterr().out
+
+
+class TestMPCFillCardback:
+    """Test extraction of the order's deck-wide <cardback>."""
+
+    def test_returns_cardback_id(self):
+        deck_text = make_mpcfill_xml(1, [('front_a', '0', 'Sol Ring.jpg')], cardback='lotus_id')
+
+        assert extract_mpcfill_cardback_id(deck_text) == 'lotus_id'
+
+    def test_returns_none_when_absent(self):
+        deck_text = make_mpcfill_xml(1, [('front_a', '0', 'Sol Ring.jpg')])
+
+        assert extract_mpcfill_cardback_id(deck_text) is None
+
+    def test_returns_none_when_blank(self):
+        """A present but empty <cardback> is treated as absent."""
+        deck_text = make_mpcfill_xml(1, [('front_a', '0', 'Sol Ring.jpg')], cardback='   ')
+
+        assert extract_mpcfill_cardback_id(deck_text) is None
+
+
+class TestWriteImage:
+    """Test the extension sniffing and stale-file cleanup in write_image()."""
+
+    def test_sniffs_extension_from_bytes(self, tmp_path):
+        path = write_image(str(tmp_path), '1SolRing', JPG_BYTES)
+
+        assert os.path.basename(path) == '1SolRing.jpg'
+        assert os.path.exists(path)
+
+    def test_replaces_same_stem_file_from_earlier_run(self, tmp_path):
+        """Re-fetching a card whose art changed format must not leave both files.
+
+        create_pdf.py's resolve_image_with_any_extension() fails on an ambiguous
+        stem match, so the old extension has to go.
+        """
+        write_image(str(tmp_path), '1SolRing', JPG_BYTES)
+        write_image(str(tmp_path), '1SolRing', PNG_BYTES)
+
+        assert [p.name for p in tmp_path.iterdir()] == ['1SolRing.png']
+
+    def test_leaves_other_stems_alone(self, tmp_path):
+        write_image(str(tmp_path), '1SolRing', JPG_BYTES)
+        write_image(str(tmp_path), '2SolRing', PNG_BYTES)
+
+        assert sorted(p.name for p in tmp_path.iterdir()) == ['1SolRing.jpg', '2SolRing.png']
+
+
+class TestMPCFillFetcher:
+    """Test that collected slots turn into the right downloads and files."""
+
+    @pytest.fixture
+    def dirs(self, tmp_path):
+        front, double_sided, back = tmp_path / 'front', tmp_path / 'ds', tmp_path / 'back'
+        for d in (front, double_sided, back):
+            d.mkdir()
+        return front, double_sided, back
+
+    def make_fetcher(self, dirs):
+        front, double_sided, back = dirs
+        return MPCFillFetcher(str(front), str(double_sided), str(back))
+
+    def test_downloads_each_unique_card_id_once(self, dirs):
+        """Duplicate slots of the same card must not each hit the network."""
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'island_id', 'Island [DFT]', None, None)
+        fetcher.collect_slot(2, 'island_id', 'Island [DFT]', None, None)
+        fetcher.collect_slot(3, 'sol_ring_id', 'Sol Ring', None, None)
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', return_value=PNG_BYTES) as mock_request:
+            fetcher.download()
+
+        assert sorted(c.args[0] for c in mock_request.call_args_list) == ['island_id', 'sol_ring_id']
+
+    def test_writes_one_front_file_per_slot(self, dirs):
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'island_id', 'Island [DFT]', None, None)
+        fetcher.collect_slot(2, 'island_id', 'Island [DFT]', None, None)
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', return_value=PNG_BYTES):
+            fetcher.download()
+
+        assert sorted(p.name for p in front.iterdir()) == ['1IslandDFT.png', '2IslandDFT.png']
+
+    def test_back_image_uses_front_name(self, dirs):
+        """create_pdf.py matches double-sided backs by the front's filename."""
+        front, double_sided, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'front_id', 'Alrund, God of the Cosmos', 'back_id', 'Hakka, Whispering Raven')
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', return_value=PNG_BYTES):
+            fetcher.download()
+
+        assert [p.name for p in front.iterdir()] == ['1AlrundGodoftheCosmos.png']
+        assert [p.name for p in double_sided.iterdir()] == ['1AlrundGodoftheCosmos.png']
+
+    def test_cardback_goes_to_back_directory(self, dirs):
+        front, double_sided, back = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'front_id', 'Sol Ring', None, None)
+        fetcher.collect_cardback('lotus_id')
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', return_value=JPG_BYTES):
+            fetcher.download()
+
+        assert [p.name for p in back.iterdir()] == [f'{CARDBACK_STEM}.jpg']
+        assert [p.name for p in double_sided.iterdir()] == []
+
+    def test_one_failed_card_does_not_abort_the_rest(self, dirs, capsys):
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'good_id', 'Sol Ring', None, None)
+        fetcher.collect_slot(2, 'bad_id', 'Mana Crypt', None, None)
+
+        def fake_request(card_id):
+            if card_id == 'bad_id':
+                raise requests.HTTPError('500 Server Error')
+            return PNG_BYTES
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', side_effect=fake_request):
+            fetcher.download()
+
+        assert [p.name for p in front.iterdir()] == ['1SolRing.png']
+        output = capsys.readouterr().out
+        assert 'slot 2 (Mana Crypt)' in output
+        assert '500 Server Error' in output
+
+    def test_empty_response_is_reported_as_missing(self, dirs, capsys):
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'empty_id', 'Sol Ring', None, None)
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill', return_value=b''):
+            fetcher.download()
+
+        assert [p.name for p in front.iterdir()] == []
+        assert 'empty image response' in capsys.readouterr().out
+
+    def test_download_without_collected_slots_is_a_noop(self, dirs):
+        fetcher = self.make_fetcher(dirs)
+
+        with patch('plugins.mtg.mpcfill.request_mpcfill') as mock_request:
+            fetcher.download()
+
+        mock_request.assert_not_called()
+
+    def test_retries_a_transient_failure(self, dirs):
+        """The Apps Script intermittently 404s, so a later attempt should succeed."""
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'flaky_id', 'Portal to Phyrexia', None, None)
+
+        attempts = [requests.HTTPError('404 Client Error'), PNG_BYTES]
+        def fake_request(card_id):
+            result = attempts.pop(0)
+            if isinstance(result, Exception):
+                raise result
+            return result
+
+        with patch('plugins.mtg.mpcfill.RETRY_DELAY_SECONDS', 0):
+            with patch('plugins.mtg.mpcfill.request_mpcfill', side_effect=fake_request):
+                fetcher.download()
+
+        assert [p.name for p in front.iterdir()] == ['1PortaltoPhyrexia.png']
+
+    def test_retries_an_empty_response(self, dirs):
+        """An empty body is treated as a transient failure, not a real image."""
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'flaky_id', 'Sol Ring', None, None)
+
+        with patch('plugins.mtg.mpcfill.RETRY_DELAY_SECONDS', 0):
+            with patch('plugins.mtg.mpcfill.request_mpcfill', side_effect=[b'', PNG_BYTES]):
+                fetcher.download()
+
+        assert [p.name for p in front.iterdir()] == ['1SolRing.png']
+
+    def test_gives_up_after_max_attempts(self, dirs, capsys):
+        front, _, _ = dirs
+        fetcher = self.make_fetcher(dirs)
+        fetcher.collect_slot(1, 'dead_id', 'Sol Ring', None, None)
+
+        error = requests.HTTPError('404 Client Error')
+        with patch('plugins.mtg.mpcfill.RETRY_DELAY_SECONDS', 0):
+            with patch('plugins.mtg.mpcfill.request_mpcfill', side_effect=error) as mock_request:
+                fetcher.download()
+
+        assert mock_request.call_count == 3
+        assert [p.name for p in front.iterdir()] == []
+        assert '404 Client Error' in capsys.readouterr().out
+
+
+class TestDecklistEncoding:
+    """Test that decklists are read as UTF-8 regardless of the locale encoding."""
+
+    # The Japanese artist credit and em dash from a real MPCFill order. The 0x81
+    # byte inside these characters is unmapped in cp1252.
+    NON_ASCII_NAME = 'Aettir and Priwen [FIN] (七原しえ—SHIE NANAHARA).png'
+
+    def write_deck(self, tmp_path, encoding='utf-8'):
+        deck_path = tmp_path / 'deck.xml'
+        deck_path.write_text(
+            make_mpcfill_xml(1, [('front_id', '0', self.NON_ASCII_NAME)]),
+            encoding=encoding,
+        )
+        return deck_path
+
+    def run_fetch(self, deck_path, default_encoding=None):
+        """
+        Invoke the fetch CLI, optionally forcing open()'s default text encoding.
+
+        Patching the locale is not enough: open() resolves its default encoding
+        in C, so a test on a UTF-8 machine would pass either way. Replacing the
+        builtin is what actually reproduces Windows here.
+        """
+        from plugins.mtg import fetch
+
+        real_open = builtins.open
+
+        def locale_open(file, mode='r', buffering=-1, encoding=None, *args, **kwargs):
+            if 'b' not in mode and encoding is None:
+                encoding = default_encoding
+            return real_open(file, mode, buffering, encoding, *args, **kwargs)
+
+        with patch.object(fetch, 'MPCFillFetcher') as mock_fetcher:
+            if default_encoding is not None:
+                with patch('builtins.open', locale_open):
+                    result = CliRunner().invoke(fetch.cli, [str(deck_path), 'mpcfill_xml'])
+            else:
+                result = CliRunner().invoke(fetch.cli, [str(deck_path), 'mpcfill_xml'])
+
+        return result, mock_fetcher.return_value
+
+    def test_reads_non_ascii_decklist_under_cp1252_locale(self, tmp_path):
+        """A cp1252 default encoding must not crash on non-ASCII card names.
+
+        Windows defaults to cp1252, which raised
+        UnicodeDecodeError: 'charmap' codec can't decode byte 0x81.
+        """
+        deck_path = self.write_deck(tmp_path)
+
+        result, fetcher = self.run_fetch(deck_path, default_encoding='cp1252')
+
+        assert result.exit_code == 0, result.output
+        fetcher.collect_slot.assert_called_once()
+        assert fetcher.collect_slot.call_args.args[2] == 'Aettir and Priwen [FIN] (七原しえ—SHIE NANAHARA)'
+
+    def test_strips_byte_order_mark(self, tmp_path):
+        """A BOM from a Windows exporter must not be glued to the first card name.
+
+        ElementTree tolerates a leading BOM, so this only bites the text formats,
+        where the first line is a card rather than markup.
+        """
+        from plugins.mtg import fetch
+
+        deck_path = tmp_path / 'deck.txt'
+        deck_path.write_text('Sol Ring\nArid Mesa', encoding='utf-8-sig')
+
+        handle_card = MagicMock()
+        with patch.object(fetch, 'scryfall_get_handle_card', return_value=handle_card):
+            result = CliRunner().invoke(fetch.cli, [str(deck_path), 'simple'])
+
+        assert result.exit_code == 0, result.output
+        parsed_names = [call.args[1] for call in handle_card.call_args_list]
+        assert parsed_names == ['Sol Ring', 'Arid Mesa']

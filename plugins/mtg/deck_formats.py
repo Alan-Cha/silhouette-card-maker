@@ -253,22 +253,20 @@ def extract_card_name(raw_name: str) -> str:
     return ".".join(parts[:-1]) if len(parts) > 1 else parts[0]
 
 
-def extract_mpcfill_card_ids(deck_text: str) -> set[str]:
-    """Extract all unique card IDs from MPCFill XML for prefetching."""
+def extract_mpcfill_cardback_id(deck_text: str) -> str | None:
+    """
+    Extract the order's deck-wide cardback ID.
+
+    An MPCFill order may declare a single <cardback> that backs every slot without
+    its own entry in <backs>. Returns None if the order does not declare one.
+    """
     data = ET.fromstring(deck_text)
-    card_ids = set()
+    cardback = data.find("cardback")
 
-    fronts = data.find("fronts")
-    if fronts:
-        for front in fronts.findall("card"):
-            card_ids.add(front.find("id").text)
+    if cardback is None or cardback.text is None:
+        return None
 
-    backs = data.find("backs")
-    if backs:
-        for back in backs.findall("card"):
-            card_ids.add(back.find("id").text)
-
-    return card_ids
+    return cardback.text.strip() or None
 
 
 def parse_mpcfill_xml(deck_text, handle_card: Callable) -> None:
@@ -302,7 +300,7 @@ def parse_mpcfill_xml(deck_text, handle_card: Callable) -> None:
             slots[slot_idx]["front_name"] = name
 
     # Assign backs to ALL their slots
-    if backs:
+    if backs is not None:
         for back in backs.findall("card"):
             card_id = back.find("id").text
             name = extract_card_name(back.find("name").text)

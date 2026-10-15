@@ -8,13 +8,14 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, REPO_ROOT)
 
 from plugins.mtg.common import ScryfallLanguage
-from plugins.mtg.deck_formats import DeckFormat, parse_deck, extract_mpcfill_card_ids
+from plugins.mtg.deck_formats import DeckFormat, parse_deck, extract_mpcfill_cardback_id
 from plugins.mtg.scryfall import get_handle_card as scryfall_get_handle_card
-from plugins.mtg.mpcfill import get_handle_card as mpc_get_handle_card, prefetch_mpcfill
+from plugins.mtg.mpcfill import MPCFillFetcher
 from utilities import configure_console_encoding, ensure_directory
 
 front_directory = os.path.join(REPO_ROOT, 'game', 'front')
 double_sided_directory = os.path.join(REPO_ROOT, 'game', 'double_sided')
+back_directory = os.path.join(REPO_ROOT, 'game', 'back')
 
 @click.command()
 @click.argument('deck_path')
@@ -57,15 +58,32 @@ def cli(
             print(f'{deck_path} is not a valid file.')
             return
 
-        with open(deck_path, 'r') as deck_file:
+        # Decklists are UTF-8. Without an explicit encoding, Python falls back to
+        # the locale encoding, which is cp1252 on Windows and cannot decode card
+        # names with non-ASCII characters. utf-8-sig also drops the byte order
+        # mark that Windows exporters add, which would otherwise end up glued to
+        # the first line of the decklist.
+        with open(deck_path, 'r', encoding='utf-8-sig') as deck_file:
             deck_text = deck_file.read()
 
+    mpcfill_fetcher = None
+
     if format == DeckFormat.MPCFILL_XML:
-        get_handle_card = mpc_get_handle_card(
+        ensure_directory(back_directory)
+
+        # The fetcher only records what each slot needs while parse_deck walks the
+        # decklist. Everything is downloaded afterwards, in parallel.
+        mpcfill_fetcher = MPCFillFetcher(
             front_directory,
-            double_sided_directory
+            double_sided_directory,
+            back_directory,
         )
-        prefetch_mpcfill(extract_mpcfill_card_ids(deck_text))
+        get_handle_card = mpcfill_fetcher.collect_slot
+
+        cardback_id = extract_mpcfill_cardback_id(deck_text)
+        if cardback_id is not None:
+            mpcfill_fetcher.collect_cardback(cardback_id)
+            print(f'Deck declares a cardback. Saving it to {back_directory}.')
     else:
         get_handle_card = scryfall_get_handle_card(
             ignore_set_and_collector_number,
@@ -94,6 +112,9 @@ def cli(
         front_directory,
         double_sided_directory,
     )
+
+    if mpcfill_fetcher is not None:
+        mpcfill_fetcher.download()
 
 if __name__ == '__main__':
     configure_console_encoding()
