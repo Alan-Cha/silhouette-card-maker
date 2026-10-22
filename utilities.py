@@ -87,6 +87,12 @@ def guess_extension(data: bytes, default: str = '.png') -> str:
 # Approximately 1.25mm of bleed assuming 300 PPI: ceil(1.25mm * 1in/25.4mm * 300ppi)
 MINIMUM_BLEED = 15
 
+# Page label font sizes at 300 PPI. The label shrinks toward the minimum on tight layouts.
+LABEL_FONT_SIZE = 40
+MIN_LABEL_FONT_SIZE = 20
+# Approximately 0.5mm of clearance between the label and the cards' bleed at 300 PPI
+LABEL_CLEARANCE = 6
+
 
 class CardSizeDef(BaseModel):
     width: str
@@ -908,9 +914,39 @@ def draw_outline(
                 width=1,
             )
 
-def add_front_back_pages(front_page: Image.Image, back_page: Image.Image, pages: List[Image.Image], page_width: int, page_height: int, ppi_ratio: float, template: str, only_fronts: bool, label: str, orientation: Orientation, label_margin_px: int, borderless: bool):
-    font = ImageFont.truetype(os.path.join(asset_directory, 'arial.ttf'), 40 * ppi_ratio)
+def load_label_font(size: float) -> ImageFont.FreeTypeFont:
+    return ImageFont.truetype(os.path.join(asset_directory, 'arial.ttf'), size)
 
+
+def fit_label(preferred_margin_px: int, available_px: int) -> Optional[Tuple[int, int]]:
+    """Place the page label so it stays clear of the cards.
+
+    Distances are in 300 PPI pixels, measured inward from the paper edge on the label side.
+    preferred_margin_px is where the label is centered when space allows; available_px is
+    how far the label may reach before touching the cards' bleed.
+
+    The label's outer edge stays where it would be at full size, since moving it further out
+    risks the printer clipping it. Instead, the font shrinks until its inner edge clears the cards.
+
+    Returns:
+        (margin_px, font_size) for the label's center and font size, or None if the label
+        cannot fit even at MIN_LABEL_FONT_SIZE.
+    """
+    def half_height(size: int) -> float:
+        # anchor "mm" centers text between the ascender and descender
+        ascent, descent = load_label_font(size).getmetrics()
+        return (ascent + descent) / 2
+
+    outer_px = preferred_margin_px - half_height(LABEL_FONT_SIZE)
+    for size in range(LABEL_FONT_SIZE, MIN_LABEL_FONT_SIZE - 1, -1):
+        half = half_height(size)
+        if outer_px + 2 * half <= available_px:
+            return round(outer_px + half), size
+
+    return None
+
+
+def add_front_back_pages(front_page: Image.Image, back_page: Image.Image, pages: List[Image.Image], page_width: int, page_height: int, ppi_ratio: float, template: str, only_fronts: bool, label: str, orientation: Orientation, label_margin_px: int, borderless: bool, label_font_size: Optional[int] = LABEL_FONT_SIZE):
     num_sheet = len(pages) + 1
     if not only_fronts:
         num_sheet = int(len(pages) / 2) + 1
@@ -922,7 +958,11 @@ def add_front_back_pages(front_page: Image.Image, back_page: Image.Image, pages:
     # Label goes on the short side of the paper, opposite the top-left black square.
     # Landscape: short sides are left/right; black square top-left → label on RIGHT.
     # Portrait: short sides are top/bottom; black square top-left → label on BOTTOM.
-    if orientation == Orientation.LANDSCAPE:
+    # A label_font_size of None means there is no room for a label.
+    if label_font_size is None:
+        pass
+    elif orientation == Orientation.LANDSCAPE:
+        font = load_label_font(label_font_size * ppi_ratio)
         # Right side: rotate page, draw horizontal text, rotate back
         front_page = front_page.rotate(-90, expand=True)
         draw = ImageDraw.Draw(front_page)
@@ -932,6 +972,7 @@ def add_front_back_pages(front_page: Image.Image, back_page: Image.Image, pages:
         front_page = front_page.rotate(90, expand=True)
     else:
         # Bottom side: horizontal text
+        font = load_label_font(label_font_size * ppi_ratio)
         draw = ImageDraw.Draw(front_page)
         label_x = math.floor((page_width / 2) * ppi_ratio)
         label_y = math.floor(page_height * ppi_ratio) - label_margin_px
@@ -1298,9 +1339,26 @@ def generate_pdf(
     thickness_px = size_convert.size_to_pixel(effective_thickness, layout_config.ppi)
     if borderless:
         # Different margin for borderless because of space constraints
-        label_margin_px = math.floor(inset_px * ppi_ratio)
+        preferred_label_margin_px = inset_px
     else:
-        label_margin_px = math.floor((inset_px - thickness_px * 2) * ppi_ratio)
+        preferred_label_margin_px = inset_px - thickness_px * 2
+
+    max_print_bleed = calculate_max_print_bleed(x_pos, y_pos, card_width_px, card_height_px, MINIMUM_BLEED)
+
+    # Space between the label-side paper edge and the bleed of the nearest cards
+    if orientation == Orientation.LANDSCAPE:
+        label_side_gap_px = page_width_px - (max(x_pos) + card_width_px) - max_print_bleed[0]
+    else:
+        label_side_gap_px = page_height_px - (max(y_pos) + card_height_px) - max_print_bleed[1]
+
+    label_fit = fit_label(preferred_label_margin_px, label_side_gap_px - LABEL_CLEARANCE)
+    if label_fit is None:
+        print('Not enough room between the cards and the paper edge for the page label. Omitting it.')
+        label_margin_px = 0
+        label_font_size = None
+    else:
+        label_margin_px = math.floor(label_fit[0] * ppi_ratio)
+        label_font_size = label_fit[1]
 
     # Paper sizes are stored as landscape; portrait registration marks need swapped dimensions.
     # When the registration orientation differs from the card layout, rotate the canvas back
@@ -1326,8 +1384,6 @@ def generate_pdf(
 
         # Create the array that will store the filled templates
         pages: List[Image.Image] = []
-
-        max_print_bleed = calculate_max_print_bleed(x_pos, y_pos, card_width_px, card_height_px, MINIMUM_BLEED)
 
         # Load and cache the single back image for reuse
         # Do this if we expect both front and back pages and if we have a back image
@@ -1476,7 +1532,8 @@ def generate_pdf(
                 label,
                 orientation,
                 label_margin_px,
-                borderless
+                borderless,
+                label_font_size,
             )
 
         if len(pages) == 0:

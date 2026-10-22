@@ -25,6 +25,10 @@ from utilities import (
     draw_card_with_bleed,
     draw_card_layout,
     add_front_back_pages,
+    fit_label,
+    load_label_font,
+    LABEL_FONT_SIZE,
+    MIN_LABEL_FONT_SIZE,
     FitMode,
     asset_directory,
     merge_extra_layouts,
@@ -1887,3 +1891,57 @@ class TestAddFrontBackPages:
         )
         assert len(pages) == 2
 
+
+    def test_no_label_font_size_draws_nothing(self):
+        """label_font_size=None should leave the front page untouched.
+
+        pages[] -> [blank front]
+        """
+        front = Image.new('RGB', (300, 400), color='white')
+        back = Image.new('RGB', (300, 400), color='white')
+        pages = []
+
+        add_front_back_pages(
+            front, back, pages,
+            page_width=300, page_height=400,
+            ppi_ratio=1.0, template='test_v1',
+            only_fronts=True, label=None,
+            orientation=Orientation.PORTRAIT, label_margin_px=10, borderless=False,
+            label_font_size=None
+        )
+        assert pages[0].getextrema() == ((255, 255), (255, 255), (255, 255))
+
+
+def label_half_height(size):
+    ascent, descent = load_label_font(size).getmetrics()
+    return (ascent + descent) / 2
+
+
+class TestFitLabel:
+    """Tests for fit_label() function."""
+
+    def test_full_size_when_room(self):
+        """With plenty of room, the label keeps its preferred margin and full size.
+
+        preferred=41, available=500 -> (41, LABEL_FONT_SIZE)
+        """
+        assert fit_label(41, 500) == (41, LABEL_FONT_SIZE)
+
+    def test_shrinks_to_clear_cards(self):
+        """A tight gap shrinks the font, keeping the label's outer edge in place.
+
+        preferred=41, available=46 -> smaller font whose inner edge is <= 46
+        """
+        margin_px, size = fit_label(41, 46)
+        outer_px = 41 - label_half_height(LABEL_FONT_SIZE)
+
+        assert MIN_LABEL_FONT_SIZE <= size < LABEL_FONT_SIZE
+        assert margin_px + label_half_height(size) <= 46 + 0.5
+        assert margin_px - label_half_height(size) == pytest.approx(outer_px, abs=0.5)
+
+    def test_none_when_too_tight(self):
+        """A gap too small for the minimum font size omits the label.
+
+        preferred=41, available=20 -> None
+        """
+        assert fit_label(41, 20) is None
