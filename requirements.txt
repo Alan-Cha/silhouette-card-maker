@@ -6,7 +6,7 @@ matplotlib==3.11.2
 mtg_parser==0.0.1a55
 natsort==8.4.0
 numpy==2.5.2
-pillow==12.3.0
+pillow==13.0.0
 pyautogui==0.9.54
 pydantic==2.14.1
 pywinauto==0.6.9
