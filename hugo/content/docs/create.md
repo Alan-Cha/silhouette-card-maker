@@ -112,6 +112,8 @@ The [Sorcery: Contested Realm]({{% ref "../plugins/sorcery_contested_realm" %}})
 
 The [Star Wars Unlimited]({{% ref "../plugins/star_wars_unlimited" %}}) plugin supports **Melee**, **Picklist**, and **SWUDB** formats.
 
+The [Warhammer 40,000: Conquest]({{% ref "../plugins/warhammer_40k_conquest" %}}) plugin supports **ConquestDB** format.
+
 ## Double-Sided Cards
 
 To create double-sided cards, put front images in the `game/front/` folder and back images in the `game/double_sided/` folder. The filenames (and file extensions) must match for each pair.
