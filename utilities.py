@@ -1480,7 +1480,15 @@ def generate_pdf(
             )
 
         if len(pages) == 0:
-            print('No pages were generated')
+            print(
+                f'No pages were generated because no card images were found in "{front_dir_path}".\n'
+                f'Add card images to this directory and try again.\n'
+                f'You can inspect its contents with "ls {front_dir_path}" on macOS/Linux '
+                f'or "Get-ChildItem {front_dir_path}" on PowerShell.\n'
+                f'To open the directory in the file explorer, use "open {front_dir_path}" '
+                f'on macOS, "xdg-open {front_dir_path}" on Linux, or '
+                f'"explorer {front_dir_path}" on Windows.'
+            )
             return
 
         # Load saved offset if available
