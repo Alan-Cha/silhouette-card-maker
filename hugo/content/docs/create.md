@@ -84,6 +84,8 @@ The [Altered]({{% ref "../plugins/altered" %}}) plugin supports **Ajordat** form
 
 The [Ashes Reborn]({{% ref "../plugins/ashes_reborn" %}}) plugin supports **Ashes** and **Ashes DB** formats.
 
+The [Battle Spirits Saga]({{% ref "../plugins/battle_spirits_saga" %}}) plugin supports **bssdb.dev** and **bssdb.dev Tabletop Simulator** formats.
+
 The [Bushiroad]({{% ref "../plugins/bushiroad" %}}) plugin supports **Bushiroad Deck Log** format for Cardfight Vanguard, Shadowverse: Evolve, Weiss Schwarz, Godzilla Card Game, and hololive.
 
 The [Digimon]({{% ref "../plugins/digimon" %}}) plugin supports **Digimoncard.app**, **Digimoncard.dev**, **Digimoncard.io**, **DigimonMeta**, **Tabletop Simulator**, and **Untap** formats.

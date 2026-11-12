@@ -14,6 +14,7 @@ The following plugins are currently available:
 * [Altered](altered)
 * [Arkham Horror: The Card Game](arkham_horror_lcg)
 * [Ashes Reborn](ashes_reborn)
+* [Battle Spirits Saga](battle_spirits_saga)
 * [Bushiroad](bushiroad)
 * [Digimon](digimon)
 * [Echoes of Astra](echoes_of_astra)

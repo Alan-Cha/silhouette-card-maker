@@ -18,6 +18,7 @@ PLUGINS = [
     ('altered', 'plugins.altered.fetch', ['ajordat']),
     ('arkham_horror_lcg', 'plugins.arkham_horror_lcg.fetch', ['arkhamdb_json']),
     ('ashes_reborn', 'plugins.ashes_reborn.fetch', ['ashes']),
+    ('battle_spirits_saga', 'plugins.battle_spirits_saga.fetch', ['bssdb']),
     ('bushiroad', 'plugins.bushiroad.fetch', ['bushiroad']),
     ('digimon', 'plugins.digimon.fetch', ['digimon']),
     ('echoes_of_astra', 'plugins.echoes_of_astra.fetch', ['astra_url']),
