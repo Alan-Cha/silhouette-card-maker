@@ -145,6 +145,8 @@ The [Lord of the Rings: Living Card Game plugin](plugins/lotr_lcg/README.md) sup
 
 The [Lorcana plugin](plugins/lorcana/README.md) supports **Dreamborn** format.
 
+The [Marvel Champions: The Card Game plugin](plugins/marvel_champions/README.md) supports **MarvelCDB** format.
+
 The [Netrunner plugin](plugins/netrunner/README.md) supports **bbCode** and **Jinteki** formats.
 
 The [One Piece plugin](plugins/one_piece/README.md) supports **Egman Events** and **OPTCG Simulator** formats.
