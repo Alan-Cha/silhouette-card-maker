@@ -127,6 +127,8 @@ The [Bushiroad plugin](plugins/bushiroad/README.md) supports **Bushiroad Deck Lo
 
 The [Digimon plugin](plugins/digimon/README.md) supports **Digimoncard.app**, **Digimoncard.dev**, **Digimoncard.io**, **DigimonMeta**, **Tabletop Simulator**, and **Untap** formats.
 
+The [Duel Masters plugin](plugins/duel_masters/README.md) supports the **official tournament coverage** decklist format and **official card IDs**.
+
 The [Echoes of Astra plugin](plugins/echoes_of_astra/README.md) supports **AstraBuilder** format.
 
 The [Elestrals plugin](plugins/elestrals/README.md) supports **Elestrals** format.

@@ -88,6 +88,8 @@ The [Bushiroad]({{% ref "../plugins/bushiroad" %}}) plugin supports **Bushiroad 
 
 The [Digimon]({{% ref "../plugins/digimon" %}}) plugin supports **Digimoncard.app**, **Digimoncard.dev**, **Digimoncard.io**, **DigimonMeta**, **Tabletop Simulator**, and **Untap** formats.
 
+The [Duel Masters]({{% ref "../plugins/duel_masters" %}}) plugin supports the **official tournament coverage** decklist format and **official card IDs**.
+
 The [Echoes of Astra]({{% ref "../plugins/echoes_of_astra" %}}) plugin supports **AstraBuilder** format.
 
 The [Elestrals]({{% ref "../plugins/elestrals" %}}) plugin supports **Elestrals** format.
