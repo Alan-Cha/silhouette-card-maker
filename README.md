@@ -153,6 +153,8 @@ The [Riftbound plugin](plugins/riftbound/README.md) supports **Piltover Archive*
 
 The [Sorcery: Contested Realm plugin](plugins/sorcery_contested_realm/README.md) supports **Curiosa** format.
 
+The [Star Trek CCG plugin](plugins/star_trek_ccg/README.md) supports **LackeyCCG** and **trekcc.org** formats for Second Edition.
+
 The [Star Wars Unlimited plugin](plugins/star_wars_unlimited/README.md) supports **Melee**, **Picklist**, and **SWUDB** formats.
 
 ## create_pdf.py

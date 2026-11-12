@@ -110,6 +110,8 @@ The [Riftbound]({{% ref "../plugins/riftbound" %}}) plugin supports **Piltover A
 
 The [Sorcery: Contested Realm]({{% ref "../plugins/sorcery_contested_realm" %}}) plugin supports **Curiosa** format.
 
+The [Star Trek CCG]({{% ref "../plugins/star_trek_ccg" %}}) plugin supports **LackeyCCG** and **trekcc.org** formats for Second Edition.
+
 The [Star Wars Unlimited]({{% ref "../plugins/star_wars_unlimited" %}}) plugin supports **Melee**, **Picklist**, and **SWUDB** formats.
 
 ## Double-Sided Cards
