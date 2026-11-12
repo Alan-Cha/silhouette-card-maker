@@ -11,6 +11,7 @@ The following plugins are currently available:
 * [Magic: The Gathering](mtg)
 * [Pokemon](pokemon)
 * [Yu-Gi-Oh!](yugioh)
+* [Alpha Clash](alpha_clash)
 * [Altered](altered)
 * [Arkham Horror: The Card Game](arkham_horror_lcg)
 * [Ashes Reborn](ashes_reborn)
