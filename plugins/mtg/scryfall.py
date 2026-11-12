@@ -162,21 +162,36 @@ def fetch_card_art(
     quantity: int,
 
     clean_card_name: str,
-    card_set: int,
-    card_collector_number: int,
+    card_set: str,
+    card_collector_number: str,
+    output_dir: str,
+
+    prefer_langs: List[ScryfallLanguage] = None,
+    face: str = None,
+) -> None:
+    card_art = fetch_image(card_set, card_collector_number, prefer_langs, face=face)
+    if card_art is not None:
+        save_card_art_copies(card_art, output_dir, index, clean_card_name, quantity)
+
+def fetch_card_faces(
+    index: int,
+    quantity: int,
+
+    clean_card_name: str,
+    card_set: str,
+    card_collector_number: str,
     layout: str,
 
-    all_parts: List = None,
-    card_name: str = None,
     prefer_langs: List[ScryfallLanguage] = None,
 
     front_img_dir: str = None,
     double_sided_dir: str = None,
+
+    all_parts: List = None,
+    card_name: str = None,
 ) -> None:
-    # Query for the front side
-    card_art = fetch_image(card_set, card_collector_number, prefer_langs)
-    if card_art is not None:
-        save_card_art_copies(card_art, front_img_dir, index, clean_card_name, quantity)
+    # Front face
+    fetch_card_art(index, quantity, clean_card_name, card_set, card_collector_number, front_img_dir, prefer_langs)
 
     # Get backside of card, if it exists
     if layout in double_sided_layouts:
@@ -184,9 +199,7 @@ def fetch_card_art(
             if all_parts and card_name:
                 fetch_meld_back(index, quantity, clean_card_name, card_name, all_parts, double_sided_dir)
         else:
-            card_art = fetch_image(card_set, card_collector_number, prefer_langs, face='back')
-            if card_art is not None:
-                save_card_art_copies(card_art, double_sided_dir, index, clean_card_name, quantity)
+            fetch_card_art(index, quantity, clean_card_name, card_set, card_collector_number, double_sided_dir, prefer_langs, face='back')
 
 def partition_printings(printings: List, condition: List) -> Tuple[List, List]:
     matches = []
@@ -248,18 +261,18 @@ def fetch_card(
         # Query for card info
         card_json = request_scryfall(card_info_query).json()
 
-        fetch_card_art(
+        fetch_card_faces(
             index,
             quantity,
             remove_nonalphanumeric(card_json['name']),
             card_json['set'],
             card_json['collector_number'],
             card_json['layout'],
-            card_json.get('all_parts'),
-            card_json['name'],
             prefer_langs,
             front_img_dir,
             double_sided_dir,
+            card_json.get('all_parts'),
+            card_json['name'],
         )
 
         # Fetch tokens
@@ -269,7 +282,7 @@ def fetch_card(
                     if related["component"] == "token":
                         card_info_query = related["uri"]
                         card_json = request_scryfall(card_info_query).json()
-                        fetch_card_art(
+                        fetch_card_faces(
                             index,
                             quantity,
                             # Offsprint tokens have the same name as the card, so append _token to differentiate
@@ -346,18 +359,18 @@ def fetch_card(
                 set = best_print["set"]
                 collector_number = best_print["collector_number"]
 
-        fetch_card_art(
+        fetch_card_faces(
             index,
             quantity,
             clean_card_name,
             set,
             collector_number,
             card_json['layout'],
-            card_json.get('all_parts'),
-            card_json['name'],
             prefer_langs,
             front_img_dir,
             double_sided_dir,
+            card_json.get('all_parts'),
+            card_json['name'],
         )
 
         # Fetch tokens
@@ -367,7 +380,7 @@ def fetch_card(
                     if related["component"] == "token":
                         card_info_query = related["uri"]
                         card_json = request_scryfall(card_info_query).json()
-                        fetch_card_art(
+                        fetch_card_faces(
                             index,
                             quantity,
                             # Offsprint tokens have the same name as the card, so append _token to differentiate

@@ -7,7 +7,7 @@ import shutil
 import tempfile
 import pytest
 import requests
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call
 
 from plugins.mtg.deck_formats import (
     DeckFormat,
@@ -21,7 +21,7 @@ from plugins.mtg.deck_formats import (
     parse_scryfall_json,
 )
 from plugins.mtg.common import ScryfallLanguage, to_scryfall_api_lang
-from plugins.mtg.scryfall import request_scryfall, get_handle_card, fetch_card, fetch_printings, build_image_url, fetch_image
+from plugins.mtg.scryfall import request_scryfall, get_handle_card, fetch_card, fetch_card_faces, fetch_printings, build_image_url, fetch_image
 from typing import List
 from plugins.mtg.patterns import MOXFIELD_PATTERN, DECKSTATS_PATTERN
 
@@ -840,7 +840,7 @@ class TestFetchCardWithLanguage:
                    front_img_dir='front', double_sided_dir='double_sided')
 
         args, _ = mock_fetch_art.call_args
-        assert args[8] == langs
+        assert args[6] == langs
 
     @patch('plugins.mtg.scryfall.fetch_card_art')
     @patch('plugins.mtg.scryfall.request_scryfall')
@@ -854,7 +854,74 @@ class TestFetchCardWithLanguage:
                    front_img_dir='front', double_sided_dir='double_sided')
 
         args, _ = mock_fetch_art.call_args
-        assert args[8] is None
+        assert args[6] is None
+
+
+class TestFetchCardFaces:
+    """Unit tests for fetch_card_faces, which owns the front/back (double-faced
+    and meld) decision logic that fetch_card_art used to contain."""
+
+    @patch('plugins.mtg.scryfall.fetch_meld_back')
+    @patch('plugins.mtg.scryfall.fetch_card_art')
+    def test_normal_layout_fetches_front_only(self, mock_art, mock_meld):
+        """A single-faced card only fetches its front art."""
+        fetch_card_faces(1, 1, 'lightningbolt', 'lea', '161', 'normal',
+                         prefer_langs=None, front_img_dir='F', double_sided_dir='D')
+
+        mock_art.assert_called_once_with(1, 1, 'lightningbolt', 'lea', '161', 'F', None)
+        mock_meld.assert_not_called()
+
+    @patch('plugins.mtg.scryfall.fetch_meld_back')
+    @patch('plugins.mtg.scryfall.fetch_card_art')
+    def test_double_faced_layout_fetches_front_and_back(self, mock_art, mock_meld):
+        """A double-faced card fetches the front into front_img_dir and the
+        back (face='back') into double_sided_dir."""
+        fetch_card_faces(2, 1, 'valki', 'khm', '111', 'modal_dfc',
+                         prefer_langs=None, front_img_dir='F', double_sided_dir='D')
+
+        assert mock_art.call_args_list == [
+            call(2, 1, 'valki', 'khm', '111', 'F', None),
+            call(2, 1, 'valki', 'khm', '111', 'D', None, face='back'),
+        ]
+        mock_meld.assert_not_called()
+
+    @patch('plugins.mtg.scryfall.fetch_meld_back')
+    @patch('plugins.mtg.scryfall.fetch_card_art')
+    def test_meld_layout_uses_fetch_meld_back(self, mock_art, mock_meld):
+        """A meld card fetches the front normally but delegates the back to
+        fetch_meld_back rather than requesting a 'back' face."""
+        all_parts = [{'component': 'meld_result', 'name': 'Urza, Planeswalker'}]
+        fetch_card_faces(3, 1, 'urzalordhighartificer', 'bro', '225', 'meld',
+                         prefer_langs=None, front_img_dir='F', double_sided_dir='D',
+                         all_parts=all_parts, card_name='Urza, Lord High Artificer')
+
+        mock_art.assert_called_once_with(3, 1, 'urzalordhighartificer', 'bro', '225', 'F', None)
+        mock_meld.assert_called_once_with(
+            3, 1, 'urzalordhighartificer', 'Urza, Lord High Artificer', all_parts, 'D')
+
+    @patch('plugins.mtg.scryfall.fetch_meld_back')
+    @patch('plugins.mtg.scryfall.fetch_card_art')
+    def test_meld_layout_without_parts_skips_back(self, mock_art, mock_meld):
+        """A meld layout missing all_parts/card_name fetches only the front and
+        does not attempt the meld back."""
+        fetch_card_faces(4, 1, 'somecard', 'bro', '1', 'meld',
+                         prefer_langs=None, front_img_dir='F', double_sided_dir='D')
+
+        mock_art.assert_called_once_with(4, 1, 'somecard', 'bro', '1', 'F', None)
+        mock_meld.assert_not_called()
+
+    @patch('plugins.mtg.scryfall.fetch_meld_back')
+    @patch('plugins.mtg.scryfall.fetch_card_art')
+    def test_quantity_and_langs_passed_through(self, mock_art, mock_meld):
+        """quantity and prefer_langs are forwarded to fetch_card_art for both faces."""
+        langs = [ScryfallLanguage.JAPANESE]
+        fetch_card_faces(5, 3, 'card', 'set', '7', 'transform',
+                         prefer_langs=langs, front_img_dir='F', double_sided_dir='D')
+
+        assert mock_art.call_args_list == [
+            call(5, 3, 'card', 'set', '7', 'F', langs),
+            call(5, 3, 'card', 'set', '7', 'D', langs, face='back'),
+        ]
 
 
 # --- Integration Tests for API and Image Fetching ---
