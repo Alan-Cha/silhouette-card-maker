@@ -16,6 +16,7 @@ The following plugins are currently available:
 * [Ashes Reborn](ashes_reborn)
 * [Bushiroad](bushiroad)
 * [Digimon](digimon)
+* [Dragon Ball Super Card Game Fusion World](dragon_ball_super_fusion_world)
 * [Echoes of Astra](echoes_of_astra)
 * [Elestrals](elestrals)
 * [Final Fantasy](final_fantasy)
