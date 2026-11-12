@@ -29,3 +29,4 @@ The following plugins are currently available:
 * [Riftbound](riftbound)
 * [Sorcery: Contested Realm](sorcery_contested_realm)
 * [Star Wars Unlimited](star_wars_unlimited)
+* [Vampire: The Eternal Struggle](vtes)

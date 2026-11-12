@@ -112,6 +112,8 @@ The [Sorcery: Contested Realm]({{% ref "../plugins/sorcery_contested_realm" %}})
 
 The [Star Wars Unlimited]({{% ref "../plugins/star_wars_unlimited" %}}) plugin supports **Melee**, **Picklist**, and **SWUDB** formats.
 
+The [Vampire: The Eternal Struggle]({{% ref "../plugins/vtes" %}}) plugin supports **Amaranth**, **Lackey**, **TWDA**, and **VDB** formats.
+
 ## Double-Sided Cards
 
 To create double-sided cards, put front images in the `game/front/` folder and back images in the `game/double_sided/` folder. The filenames (and file extensions) must match for each pair.
