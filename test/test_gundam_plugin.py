@@ -15,7 +15,7 @@ from plugins.gundam.deck_formats import (
     parse_egman,
     parse_exburst,
 )
-from plugins.gundam.gundam import request_bandai, get_handle_card
+from plugins.gundam.gundam import request_bandai, get_handle_card, to_image_card_number
 
 
 # --- Unit Tests for Deck Format Parsing ---
@@ -117,6 +117,18 @@ class TestExburstFormat:
         assert parsed_cards[0]['quantity'] == 4
 
 
+class TestImageCardNumber:
+    """Test mapping decklist card numbers to official image names."""
+
+    def test_promo_suffix_maps_to_p1(self):
+        assert to_image_card_number('ST03-003_PR') == 'ST03-003_p1'
+        assert to_image_card_number('ST03-003_pr') == 'ST03-003_p1'
+
+    def test_other_numbers_unchanged(self):
+        assert to_image_card_number('ST03-003') == 'ST03-003'
+        assert to_image_card_number('GD01-024_p1') == 'GD01-024_p1'
+
+
 # --- Integration Tests for API and Image Fetching ---
 
 @pytest.mark.integration
@@ -175,3 +187,15 @@ class TestFullFetchWorkflow:
         for f in files:
             file_path = os.path.join(front_dir, f)
             assert os.path.getsize(file_path) > 0
+
+    def test_fetch_promo_card_deckplanet(self, temp_dirs):
+        """Test fetching a DeckPlanet promo ('_PR') card saves a .webp image."""
+        front_dir = temp_dirs
+
+        deck_text = "2 Geara Zulu [ST03-003_PR]"
+
+        handle_card = get_handle_card(front_dir)
+        parse_deck(deck_text, DeckFormat.DECKPLANET, handle_card)
+
+        files = sorted(os.listdir(front_dir))
+        assert files == ['1ST03-003_PR1.webp', '1ST03-003_PR2.webp']

@@ -1,12 +1,19 @@
 from os import path
+from re import IGNORECASE, sub
 from requests import Response, Session
 from time import sleep
+
+from utilities import guess_extension
 
 session = Session()
 
 CARD_ART_URL_TEMPLATE = 'https://www.gundam-gcg.com/en/images/cards/card/{card_number}.webp'
 
-OUTPUT_CARD_ART_FILE_TEMPLATE = '{deck_index}{card_number}{quantity_counter}.png'
+OUTPUT_CARD_ART_FILE_TEMPLATE = '{deck_index}{card_number}{quantity_counter}{extension}'
+
+def to_image_card_number(card_number: str) -> str:
+    # DeckPlanet marks promo printings with '_PR'; the official site names them '_p1'
+    return sub(r'_PR$', '_p1', card_number, flags=IGNORECASE)
 
 def request_bandai(query: str) -> Response:
     r = session.get(query, headers = {'user-agent': 'silhouette-card-maker/0.1', 'accept': '*/*'})
@@ -25,12 +32,14 @@ def fetch_card(
     front_img_dir: str,
 ):
     # Query for card info
-    card_art = request_bandai(CARD_ART_URL_TEMPLATE.format(card_number=card_number)).content
+    card_art = request_bandai(CARD_ART_URL_TEMPLATE.format(card_number=to_image_card_number(card_number))).content
     
     if card_art is not None:
+        extension = guess_extension(card_art)
+
         # Save image based on quantity
         for counter in range(quantity):
-            image_path = path.join(front_img_dir, OUTPUT_CARD_ART_FILE_TEMPLATE.format(deck_index=str(index), card_number=card_number, quantity_counter=str(counter + 1)))
+            image_path = path.join(front_img_dir, OUTPUT_CARD_ART_FILE_TEMPLATE.format(deck_index=str(index), card_number=card_number, quantity_counter=str(counter + 1), extension=extension))
 
             with open(image_path, 'wb') as f:
                 f.write(card_art)
