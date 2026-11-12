@@ -135,6 +135,8 @@ The [Final Fantasy plugin](plugins/final_fantasy/README.md) supports **OCTGN**, 
 
 The [Flesh and Blood plugin](plugins/flesh_and_blood/README.md) supports **Fabrary** format.
 
+The [A Game of Thrones: The Card Game plugin](plugins/game_of_thrones_lcg/README.md) supports **ThronesDB** format.
+
 The [Grand Archive plugin](plugins/grand_archive/README.md) supports **Omnideck** format.
 
 The [Gundam plugin](plugins/gundam/README.md) supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.

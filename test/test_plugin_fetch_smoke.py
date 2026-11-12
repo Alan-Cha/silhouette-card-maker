@@ -24,6 +24,7 @@ PLUGINS = [
     ('elestrals', 'plugins.elestrals.fetch', ['elestrals']),
     ('final_fantasy', 'plugins.final_fantasy.fetch', ['fftcg']),
     ('flesh_and_blood', 'plugins.flesh_and_blood.fetch', ['fab']),
+    ('game_of_thrones_lcg', 'plugins.game_of_thrones_lcg.fetch', ['thronesdb_json']),
     ('grand_archive', 'plugins.grand_archive.fetch', ['gatcg']),
     ('gundam', 'plugins.gundam.fetch', ['gundam']),
     ('keyforge', 'plugins.keyforge.fetch', ['archon_arcana']),
