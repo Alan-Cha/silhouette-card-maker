@@ -55,6 +55,8 @@ Options:
   --ignore_ub                     Exclude Universe Beyond printings from
                                   consideration.
   --tokens                        Fetch related tokens when fetching cards
+  --exclude_basics                Skip basic lands (including Wastes and Snow-
+                                  Covered basics).
   --help                          Show this message and exit.
 ```
 
@@ -118,6 +120,12 @@ Use an MTG Arena decklist named `deck.txt` and exclude Universe Beyond printings
 
 ```sh
 python plugins/mtg/fetch.py game/decklist/deck.txt mtga --ignore_ub
+```
+
+Use an MTG Arena decklist named `deck.txt` and skip basic lands, for example if you already own enough of them. This applies to every format except `mpcfill_xml`.
+
+```sh
+python plugins/mtg/fetch.py game/decklist/deck.txt mtga --exclude_basics
 ```
 
 ## Formats

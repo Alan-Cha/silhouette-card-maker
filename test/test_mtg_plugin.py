@@ -20,7 +20,7 @@ from plugins.mtg.deck_formats import (
     parse_moxfield,
     parse_scryfall_json,
 )
-from plugins.mtg.common import ScryfallLanguage, to_scryfall_api_lang
+from plugins.mtg.common import ScryfallLanguage, is_basic_land, to_scryfall_api_lang
 from plugins.mtg.scryfall import request_scryfall, get_handle_card, fetch_card, fetch_printings, build_image_url, fetch_image
 from typing import List
 from plugins.mtg.patterns import MOXFIELD_PATTERN, DECKSTATS_PATTERN
@@ -396,6 +396,79 @@ class TestScryfallJsonFormat:
         assert any("back.jpg" in url for url in fetched_urls)
         assert len(os.listdir(front_dir)) == 1
         assert len(os.listdir(back_dir)) == 1
+
+
+class TestExcludeBasics:
+    """Test that --exclude_basics skips basic lands across deck formats."""
+
+    MTGA_DECK = """Deck
+4 Lightning Bolt (2XM) 117
+10 Mountain (MOM) 277
+2 snow-covered island
+1 Wastes
+1 Delver of Secrets // Insectile Aberration (ISD) 51
+1 Dryad Arbor"""
+
+    def test_is_basic_land(self):
+        assert is_basic_land("Island")
+        assert is_basic_land(" snow-covered FOREST ")
+        assert is_basic_land("Wastes")
+        assert not is_basic_land("Dryad Arbor")
+        assert not is_basic_land("Islandwalk Hero")
+
+    @patch('plugins.mtg.scryfall.fetch_card')
+    def test_basics_skipped_and_non_basics_fetched(self, mock_fetch_card):
+        """Through the real Scryfall handle_card, only non-basic cards reach fetch_card."""
+        handle_card = get_handle_card(
+            False, False, [], [], False, False, False, False, None, True, 'front', 'double_sided',
+        )
+
+        parse_deck(self.MTGA_DECK, DeckFormat.MTGA, handle_card, exclude_basics=True)
+
+        # fetch_card args: (index, quantity, set, collector_number, ignore_set, name, ...)
+        fetched = [(c.args[0], c.args[5], c.args[1]) for c in mock_fetch_card.call_args_list]
+        assert fetched == [
+            (1, "Lightning Bolt", 4),
+            (5, "Delver of Secrets // Insectile Aberration", 1),
+            (6, "Dryad Arbor", 1),
+        ]
+        # tokens flag is passed through unchanged for the cards that are fetched
+        assert all(c.args[14] is True for c in mock_fetch_card.call_args_list)
+
+    def test_basics_kept_by_default(self):
+        handle_card = MagicMock()
+
+        parse_deck(self.MTGA_DECK, DeckFormat.MTGA, handle_card)
+
+        assert handle_card.call_count == 6
+
+    @patch('plugins.mtg.deck_formats.requests.get')
+    def test_scryfall_json_direct_images_skip_basics(self, mock_get, tmp_path):
+        """Basics are skipped even when scryfall_json would download images directly."""
+        mock_get.return_value = MagicMock(content=b'fake_image_data')
+        deck_text = """{"entries": {"mainboard": [
+  {"count": 1, "card_digest": {"name": "Lightning Bolt", "set": "clu", "collector_number": "141",
+    "image_uris": {"front": "https://cards.scryfall.io/bolt.jpg"}}},
+  {"count": 8, "card_digest": {"name": "Island", "set": "mom", "collector_number": "278",
+    "image_uris": {"front": "https://cards.scryfall.io/island.jpg"}}}
+]}}"""
+        handle_card = MagicMock()
+
+        parse_deck(deck_text, DeckFormat.SCRYFALL_JSON, handle_card, str(tmp_path), '', exclude_basics=True)
+
+        handle_card.assert_not_called()
+        assert [c.args[0] for c in mock_get.call_args_list] == ["https://cards.scryfall.io/bolt.jpg"]
+        assert os.listdir(tmp_path) == ["1LightningBolt1.png"]
+
+    def test_cubecobra_csv_skips_basics(self, tmp_path):
+        deck_text = """name,Set,Collector Number,image URL,image Back URL
+Plains,mom,277,,
+Lightning Bolt,leb,162,,"""
+        handle_card = MagicMock()
+
+        parse_deck(deck_text, DeckFormat.CUBECOBRA_CSV, handle_card, str(tmp_path), '', exclude_basics=True)
+
+        handle_card.assert_called_once_with(2, "Lightning Bolt", "leb", "162", 1)
 
 
 

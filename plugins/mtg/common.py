@@ -4,6 +4,15 @@ from enum import Enum
 def remove_nonalphanumeric(s: str) -> str:
     return re.sub(r'[^\w]', '', s)
 
+BASIC_LAND_NAMES = {
+    'plains', 'island', 'swamp', 'mountain', 'forest', 'wastes',
+    'snow-covered plains', 'snow-covered island', 'snow-covered swamp',
+    'snow-covered mountain', 'snow-covered forest',
+}
+
+def is_basic_land(name: str) -> bool:
+    return name.strip().casefold() in BASIC_LAND_NAMES
+
 class ScryfallLanguage(Enum):
     ENGLISH            = "en"
     SPANISH            = "sp"
