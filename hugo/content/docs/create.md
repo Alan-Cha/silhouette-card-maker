@@ -100,6 +100,8 @@ The [Grand Archive]({{% ref "../plugins/grand_archive" %}}) plugin supports **Om
 
 The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.
 
+The [Gundam M.S. War]({{% ref "../plugins/gundam_ms_war" %}}) plugin supports a plain **text** format (quantity and card number) for the 2001 Gundam Wing-era game.
+
 The [Lorcana]({{% ref "../plugins/lorcana" %}}) plugin supports **Dreamborn** format.
 
 The [Netrunner]({{% ref "../plugins/netrunner" %}}) plugin supports **bbCode** and **Jinteki** formats.
