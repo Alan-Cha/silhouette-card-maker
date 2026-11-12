@@ -7,6 +7,8 @@ from typing import Optional
 
 from PIL import Image
 
+from plugins.lorcana.common import remove_nonalphanumeric
+
 session = requests.Session()
 
 _promo_set_codes_cache: Optional[list] = None
@@ -57,9 +59,6 @@ def format_lorcast_query(name: str, variant: Optional[str]) -> str:
         query += f'+rarity:{variant}'
 
     return query
-
-def remove_nonalphanumeric(s: str) -> str:
-    return re.sub(r'[^\w]', '', s)
 
 def fetch_card(
     index: int,
