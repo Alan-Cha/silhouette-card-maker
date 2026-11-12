@@ -100,6 +100,8 @@ The [Grand Archive]({{% ref "../plugins/grand_archive" %}}) plugin supports **Om
 
 The [Gundam]({{% ref "../plugins/gundam" %}}) plugin supports **DeckPlanet**, **Egman Events**, **ExBurst**, and **Limitless TCG** formats.
 
+The [Legend of the Five Rings: The Card Game]({{% ref "../plugins/legend_of_the_five_rings_lcg" %}}) plugin supports **EmeraldDB** format.
+
 The [Lorcana]({{% ref "../plugins/lorcana" %}}) plugin supports **Dreamborn** format.
 
 The [Netrunner]({{% ref "../plugins/netrunner" %}}) plugin supports **bbCode** and **Jinteki** formats.

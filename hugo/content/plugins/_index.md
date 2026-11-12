@@ -22,6 +22,7 @@ The following plugins are currently available:
 * [Flesh and Blood](flesh_and_blood)
 * [Grand Archive](grand_archive)
 * [Gundam](gundam)
+* [Legend of the Five Rings: The Card Game](legend_of_the_five_rings_lcg)
 * [Lorcana](lorcana)
 * [Lord of the Rings: Living Card Game](lotr_lcg)
 * [Netrunner](netrunner)
