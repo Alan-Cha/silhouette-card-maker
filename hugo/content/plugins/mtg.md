@@ -5,7 +5,7 @@ weight: 1
 
 This plugin reads a decklist and automatically fetches the card art and puts them in the proper `game/` directories.
 
-This plugin supports many decklist formats such as `simple`, `mtga`, `mtgo`, `archidekt`, `cubecobra_csv`, `deckstats`, `moxfield`, `scryfall_json`, `mpcfill_xml`, and `url`. To learn more, see [here](#formats).
+This plugin supports many decklist formats such as `simple`, `mtga`, `mtgo`, `archidekt`, `cubecobra_csv`, `deckstats`, `dek`, `moxfield`, `scryfall_json`, `mpcfill_xml`, and `url`. To learn more, see [here](#formats).
 
 ## Basic Instructions
 
@@ -28,7 +28,7 @@ Now you can create the PDF using [`create_pdf.py`]({{% ref "../docs/create" %}})
 ## CLI Options
 
 ```
-Usage: fetch.py [OPTIONS] DECK_PATH {archidekt|cubecobra_csv|deckstats|moxfield|mpcfill_xml|mtga|mtgo|scryfall_json|simple|url}
+Usage: fetch.py [OPTIONS] DECK_PATH {archidekt|cubecobra_csv|deckstats|dek|moxfield|mpcfill_xml|mtga|mtgo|scryfall_json|simple|url}
 
 Options:
   -i, --ignore_set_and_collector_number
@@ -159,6 +159,20 @@ name,CMC,Type,Color,Set,Collector Number,Rarity,Color Category,status,Finish,may
 
 //Maybeboard
 1 [MID#159] Smoldering Egg // Ashmouth Dragon
+```
+
+### `dek`
+
+Magic: The Gathering Online `.dek` XML format. Sideboard cards are included.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NetDeckID>0</NetDeckID>
+  <PreconstructedDeckID>0</PreconstructedDeckID>
+  <Cards CatID="12345" Quantity="4" Sideboard="false" Name="Lightning Bolt" Annotation="0" />
+  <Cards CatID="67890" Quantity="2" Sideboard="true" Name="Pyroblast" Annotation="0" />
+</Deck>
 ```
 
 ### `moxfield`

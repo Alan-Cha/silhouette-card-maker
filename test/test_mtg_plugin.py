@@ -8,6 +8,7 @@ import tempfile
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
+from xml.etree import ElementTree as ET
 
 from plugins.mtg.deck_formats import (
     DeckFormat,
@@ -15,6 +16,7 @@ from plugins.mtg.deck_formats import (
     parse_simple_list,
     parse_mtga,
     parse_mtgo,
+    parse_dek,
     parse_archidekt,
     parse_deckstats,
     parse_moxfield,
@@ -183,6 +185,49 @@ SIDEBOARD:
         assert parsed_cards[0]['quantity'] == 1
         assert parsed_cards[1]['name'] == "Witch Enchanter"
         assert parsed_cards[1]['quantity'] == 2
+
+
+class TestDekFormat:
+    """Test MTGO .dek XML format parsing."""
+
+    DEK_TEXT = """<?xml version="1.0" encoding="utf-8"?>
+<Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NetDeckID>0</NetDeckID>
+  <PreconstructedDeckID>0</PreconstructedDeckID>
+  <Cards CatID="12345" Quantity="4" Sideboard="false" Name="Lightning Bolt" Annotation="0" />
+  <Cards CatID="23456" Quantity="1" Sideboard="false" Name="Fire // Ice" Annotation="0" />
+  <Cards CatID="34567" Quantity="2" Sideboard="true" Name="Pyroblast" Annotation="0" />
+</Deck>"""
+
+    def test_parse_dek_includes_sideboard(self):
+        """Main deck and sideboard cards are all dispatched with name and quantity."""
+        handle_card = MagicMock()
+
+        parse_deck(self.DEK_TEXT, DeckFormat.DEK, handle_card)
+
+        assert [c.args for c in handle_card.call_args_list] == [
+            (1, "Lightning Bolt", "", "", 4),
+            (2, "Fire // Ice", "", "", 1),
+            (3, "Pyroblast", "", "", 2),
+        ]
+
+    def test_parse_dek_skips_entries_without_name(self):
+        """Cards elements missing a Name are skipped rather than fetched."""
+        deck_text = '<Deck><Cards CatID="1" Quantity="1" Sideboard="false" /><Cards Quantity="3" Name="Island" /></Deck>'
+        handle_card = MagicMock()
+
+        parse_dek(deck_text, handle_card)
+
+        handle_card.assert_called_once_with(1, "Island", "", "", 3)
+
+    def test_parse_dek_malformed_xml_raises(self):
+        """Malformed XML is reported as an error instead of being swallowed."""
+        handle_card = MagicMock()
+
+        with pytest.raises(ET.ParseError):
+            parse_dek('<Deck><Cards Quantity="4" Name="Lightning Bolt"></Deck>', handle_card)
+
+        handle_card.assert_not_called()
 
 
 class TestArchidektFormat:
