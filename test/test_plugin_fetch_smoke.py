@@ -28,6 +28,7 @@ PLUGINS = [
     ('gundam', 'plugins.gundam.fetch', ['gundam']),
     ('keyforge', 'plugins.keyforge.fetch', ['archon_arcana']),
     ('lorcana', 'plugins.lorcana.fetch', ['lorcast']),
+    ('lord_of_the_rings_tcg', 'plugins.lord_of_the_rings_tcg.fetch', ['gemp_id', 'gemp_url']),
     ('lotr_lcg', 'plugins.lotr_lcg.fetch', ['ringsdb_url', 'ringsdb_fellowship_url', 'ringsdb_scenario_url', 'hallofbeorn_url']),
     ('mtg', 'plugins.mtg.fetch', ['moxfield', 'archidekt', 'text']),
     ('netrunner', 'plugins.netrunner.fetch', ['netrunnerdb']),

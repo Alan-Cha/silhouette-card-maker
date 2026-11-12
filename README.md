@@ -143,6 +143,8 @@ The [KeyForge plugin](plugins/keyforge/README.md) supports **Master Vault** (inc
 
 The [Lord of the Rings: Living Card Game plugin](plugins/lotr_lcg/README.md) supports **RingsDB decklists**, **RingsDB fellowships**, and **RingsDB scenarios**, using user-supplied local back scans.
 
+The [Lord of the Rings TCG plugin](plugins/lord_of_the_rings_tcg/README.md) supports **Gemp blueprint ID** and **Gemp deck link** formats.
+
 The [Lorcana plugin](plugins/lorcana/README.md) supports **Dreamborn** format.
 
 The [Netrunner plugin](plugins/netrunner/README.md) supports **bbCode** and **Jinteki** formats.
