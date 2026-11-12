@@ -155,6 +155,8 @@ The [Sorcery: Contested Realm plugin](plugins/sorcery_contested_realm/README.md)
 
 The [Star Wars Unlimited plugin](plugins/star_wars_unlimited/README.md) supports **Melee**, **Picklist**, and **SWUDB** formats.
 
+The [Star Wars: The Card Game plugin](plugins/star_wars_lcg/README.md) supports **SWLCGDB** format.
+
 ## create_pdf.py
 `create_pdf.py` is a CLI tool that layouts your card images into a PDF with registration marks that can be cut out with the appropriate cutting template in [`cutting_templates/`](cutting_templates/).
 
