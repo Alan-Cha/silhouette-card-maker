@@ -114,6 +114,7 @@ def generate_single_dxf(
         y_pos,
         ppi,
         output_path=str(output_file),
+        shape=card_def.shape or "rectangle",
     )
 
     num_cards = num_cols * num_rows
@@ -187,11 +188,13 @@ def single(output_file, paper_size, card_size, card_height, card_width, card_rad
         resolved_card_width = card_def.width
         resolved_card_height = card_def.height
         resolved_card_radius = card_radius if card_radius is not None else (card_def.radius or config.defaults.card_radius)
+        resolved_card_shape = card_def.shape or "rectangle"
         card_label = card_size
     else:
         resolved_card_width = card_width
         resolved_card_height = card_height
         resolved_card_radius = card_radius if card_radius is not None else config.defaults.card_radius
+        resolved_card_shape = "rectangle"
         card_label = f"{card_width}x{card_height}"
 
     # Resolve paper parameters (stored as landscape: longer dim = width)
@@ -270,6 +273,7 @@ def single(output_file, paper_size, card_size, card_height, card_width, card_rad
         y_pos,
         ppi,
         output_path=str(output_path),
+        shape=resolved_card_shape,
     )
 
     num_cards = num_cols * num_rows
@@ -566,6 +570,7 @@ def generate_all_optimized(config: LayoutConfig, out: Path):
                         card_def.width, card_def.height, card_def.radius or config.defaults.card_radius,
                         best_computed.x_pos, best_computed.y_pos, ppi,
                         output_path=str(output_file),
+                        shape=card_def.shape or "rectangle",
                     )
 
                     print(f"  {paper_size} + {card_size} ({variant}): {num_cols}x{num_rows} ({best_count} cards), max_length={best_computed.max_length_mm}mm -> {output_file}")

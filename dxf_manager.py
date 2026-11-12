@@ -8,6 +8,21 @@ from typing import List
 # Write fixed timestamps and GUIDs so regenerated files are deterministic.
 ezdxf.options.write_fixed_meta_data_for_testing = True
 
+def add_circle(msp, x, y, width, height):
+    """Add a circle as a DXF CIRCLE entity.
+
+    For circular cards, width and height should be equal (the diameter).
+    The circle is centered at (x + width/2, y + height/2) in DXF coordinates.
+    """
+    # Convert screen Y-down (origin top-left) to DXF Y-up (origin bottom-left)
+    # Center the circle at the middle of the bounding box
+    center_x = x + width / 2
+    center_y = -y - height / 2
+    radius = width / 2
+
+    msp.add_circle((center_x, center_y), radius)
+
+
 def add_rounded_rectangle(msp, x, y, width, height, radius):
     """Add a rounded rectangle as a single closed LWPOLYLINE with bulge factors.
 
@@ -52,7 +67,7 @@ def add_rounded_rectangle(msp, x, y, width, height, radius):
 
 
 # Create new DXF document
-def generate_dxf(card_width: str, card_height: str, card_radius: str, x_pos: List[int], y_pos: List[int], ppi:int, output_path:str):
+def generate_dxf(card_width: str, card_height: str, card_radius: str, x_pos: List[int], y_pos: List[int], ppi:int, output_path:str, shape:str = "rectangle"):
     doc = ezdxf.new(dxfversion='R2010')
     float_pattern = r"(?:\d+\.\d*|\.\d+|\d+)"  # matches 1.0, .5, or 2
     # Match in or mm (default=mm)
@@ -78,7 +93,11 @@ def generate_dxf(card_width: str, card_height: str, card_radius: str, x_pos: Lis
             else:
                 pos_x = x_pos[x] * 25.4 / ppi
                 pos_y = y_pos[y] * 25.4 / ppi
-            add_rounded_rectangle(msp, pos_x, pos_y, width, height, radius)
+
+            if shape == "circle":
+                add_circle(msp, pos_x, pos_y, width, height)
+            else:
+                add_rounded_rectangle(msp, pos_x, pos_y, width, height, radius)
 
 
     # Strip non-deterministic metadata so regenerated files don't produce

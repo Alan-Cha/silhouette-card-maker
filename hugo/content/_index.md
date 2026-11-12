@@ -48,8 +48,9 @@ Other notable card sizes include:
 * `euro_business`
 * `credit`
 * `photo`, for K-pop photocards
+* `poker_chip`, for poker chips and round board game tokens (see [Circular Cards](#circular-cards))
 
-The table below shows all possible paper and card size combinations and the layout of the cards.
+The table below shows all possible paper and card size combinations and the layout of the cards. Rows are grouped by shape: rectangular, then square, then circular.
 
 | Format | `letter` | `legal` | `tabloid` | `a4` | `a3` | `arch_b` |
 |---|---|---|---|---|---|---|
@@ -57,12 +58,10 @@ The table below shows all possible paper and card size combinations and the layo
 | `poker` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 4x2 (8) | 4x4 (16) | 6x3 (18) |
 | `bridge` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
 | `american_mini` | 4x4 (16) | 7x3 (21) | 9x4 (36) | 4x4 (16) | 9x4 (36) | 10x4 (40) |
-| `bridge_square` | 3x4 (12) | 5x3 (15) | 4x7 (28) | 3x4 (12) | 4x6 (24) | 4x7 (28) |
 | `business` | 2x5 (10) | 2x6 (12) | 4x5 (20) | 2x5 (10) | 3x7 (21) | 3x8 (24) |
 | `catan` | 3x3 (9) | 6x2 (12) | 7x3 (21) | 5x2 (10) | 7x3 (21) | 5x5 (25) |
 | `credit` | 2x4 (8) | 2x6 (12) | 4x4 (16) | 2x5 (10) | 3x7 (21) | 3x7 (21) |
 | `domino` | 5x2 (10) | 7x2 (14) | 5x4 (20) | 5x2 (10) | 8x3 (24) | 9x3 (27) |
-| `domino_square` | 4x5 (20) | 7x4 (28) | 5x9 (45) | 4x5 (20) | 6x8 (48) | 6x9 (54) |
 | `euro_business` | 3x3 (9) | 2x5 (10) | 3x7 (21) | 3x3 (9) | 3x7 (21) | 3x7 (21) |
 | `euro_mini` | 4x3 (12) | 4x4 (16) | 9x3 (27) | 6x2 (12) | 8x4 (32) | 9x4 (36) |
 | `japanese` | 4x2 (8) | 5x2 (10) | 4x4 (16) | 3x3 (9) | 6x3 (18) | 7x3 (21) |
@@ -71,9 +70,19 @@ The table below shows all possible paper and card size combinations and the layo
 | `mini` | 5x3 (15) | 7x3 (21) | 8x4 (32) | 4x4 (16) | 8x4 (32) | 9x4 (36) |
 | `standard_double` | 2x2 (4) | 2x2 (4) | 4x2 (8) | 2x2 (4) | 3x3 (9) | 3x3 (9) |
 | `tarot` | 2x2 (4) | 4x1 (4) | 5x2 (10) | 2x2 (4) | 5x2 (10) | 4x3 (12) |
+| `bridge_square` | 3x4 (12) | 5x3 (15) | 4x7 (28) | 3x4 (12) | 4x6 (24) | 4x7 (28) |
+| `domino_square` | 4x5 (20) | 7x4 (28) | 5x9 (45) | 4x5 (20) | 6x8 (48) | 6x9 (54) |
 | `70mm_square` | 3x2 (6) | 4x2 (8) | 5x3 (15) | 3x2 (6) | 5x3 (15) | 5x4 (20) |
+| `40mm_circle` | 4x6 (24) | 4x8 (32) | 6x9 (54) | 4x6 (24) | 6x9 (54) | 6x10 (60) |
+| `39mm_circle` | 4x6 (24) | 4x8 (32) | 6x10 (60) | 4x6 (24) | 6x9 (54) | 7x10 (70) |
+| `30mm_circle` | 6x7 (42) | 6x10 (60) | 8x12 (96) | 6x8 (48) | 8x12 (96) | 9x13 (117) |
+| `1in_circle` | 7x9 (63) | 7x12 (84) | 9x15 (135) | 7x9 (63) | 10x14 (140) | 10x16 (160) |
+| `25mm_circle` | 7x9 (63) | 7x12 (84) | 9x15 (135) | 7x10 (70) | 10x15 (150) | 10x16 (160) |
+| `20mm_circle` | 9x11 (99) | 9x15 (135) | 12x18 (216) | 9x12 (108) | 13x18 (234) | 13x19 (247) |
 
-The table below shows each card size, sorted by size.
+The tables below show each card size, sorted by size and grouped by shape.
+
+### Rectangular Cards
 
 | Card size | Inches | Millimeters | Ratio | Notes |
 | --- | --- | --- | --- | --- |
@@ -89,13 +98,29 @@ The table below shows each card size, sorted by size.
 | `credit` | **2.125 x 3.375** | 53.975 x 85.725 | 0.6296 | Credit cards <ul><li>CR80</li><li>ISO/IEC 7810</li></ul> |
 | `euro_business` | 2.165 x 3.346 | **55 x 85** | 0.6471 | AKA `photo`<br>EU business cards<br>K-pop photocards |
 | `catan` | 2.126 x 3.15 | **54 x 80** | 0.6750 |  |
-| `70mm_square` | 2.756 x 2.756 | **70 x 70** | 1.0000 |  |
 | `euro_mini` | 1.732 x 2.677 | **44 x 68** | 0.6471 | AKA `mini_euro` |
 | `mini` | **1.75 x 2.5** | 44.45 x 63.5 | 0.7000 |  |
 | `american_mini` | 1.614 x 2.48 | **41 x 63** | 0.6508 | AKA `mini_american` |
-| `bridge_square` | **2.25 x 2.25** | 57.15 x 57.15 | 1.0000 |  |
-| `domino_square` | **1.75 x 1.75** | 44.45 x 44.45 | 1.0000 |  |
 | `micro` | **1.25 x 1.75** | 31.75 x 44.45 | 0.7143 |  |
+
+### Square Cards
+
+| Card size | Inches | Millimeters | Notes |
+| --- | --- | --- | --- |
+| `70mm_square` | 2.756 | **70** |  |
+| `bridge_square` | **2.25** | 57.15 |  |
+| `domino_square` | **1.75** | 44.45 |  |
+
+### Circular Cards
+
+| Card size | Inches (⌀) | Millimeters (⌀) | Notes |
+| --- | --- | --- | --- |
+| `40mm_circle` | 1.575 | **40** | "Silver dollar" size for oversized board game tokens; close to many home-set poker chips |
+| `39mm_circle` | 1.535 | **39** | AKA `poker_chip`<br>Standard casino/clay poker chip diameter |
+| `30mm_circle` | 1.181 | **30** | Board game tokens<br>e.g. Scythe's $20 coin |
+| `1in_circle` | **1** | 25.4 | Generic 1-inch counters and chips |
+| `25mm_circle` | 0.984 | **25** | Board game tokens<br>e.g. Chaos in the Old World's tokens |
+| `20mm_circle` | 0.787 | **20** | Board game tokens<br>e.g. Scythe's $1 coin |
 
 The table below shows each paper size, sorted by size and standard.
 

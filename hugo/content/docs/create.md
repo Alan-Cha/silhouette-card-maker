@@ -209,7 +209,7 @@ Options:
   --output_path TEXT              The desired path to the output PDF.
                                   [default: game/output/game.pdf]
   --output_images                 Create images instead of a PDF.
-  --card_size [standard|poker|bridge|american_mini|bridge_square|business|catan|credit|domino|domino_square|euro_business|euro_mini|euro_poker|japanese|jumbo|micro|mini|mini_american|mini_euro|photo|standard_double|tarot|70mm_square]
+  --card_size [standard|poker|bridge|american_mini|bridge_square|business|catan|credit|domino|domino_square|euro_business|euro_mini|euro_poker|japanese|jumbo|micro|mini|mini_american|mini_euro|photo|poker_chip|standard_double|tarot|1in_circle|20mm_circle|25mm_circle|30mm_circle|39mm_circle|40mm_circle|70mm_square]
                                   The desired card size.  [default: standard]
   --paper_size [letter|legal|tabloid|a4|a3|arch_b|ansi_a|ansi_b]
                                   The desired paper size.  [default: letter]
