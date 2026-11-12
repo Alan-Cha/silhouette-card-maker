@@ -88,6 +88,8 @@ The [Bushiroad]({{% ref "../plugins/bushiroad" %}}) plugin supports **Bushiroad 
 
 The [Digimon]({{% ref "../plugins/digimon" %}}) plugin supports **Digimoncard.app**, **Digimoncard.dev**, **Digimoncard.io**, **DigimonMeta**, **Tabletop Simulator**, and **Untap** formats.
 
+The [Doomtown: Reloaded]({{% ref "../plugins/doomtown_reloaded" %}}) plugin supports **DoomtownDB** format.
+
 The [Echoes of Astra]({{% ref "../plugins/echoes_of_astra" %}}) plugin supports **AstraBuilder** format.
 
 The [Elestrals]({{% ref "../plugins/elestrals" %}}) plugin supports **Elestrals** format.

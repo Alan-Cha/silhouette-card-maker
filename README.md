@@ -127,6 +127,8 @@ The [Bushiroad plugin](plugins/bushiroad/README.md) supports **Bushiroad Deck Lo
 
 The [Digimon plugin](plugins/digimon/README.md) supports **Digimoncard.app**, **Digimoncard.dev**, **Digimoncard.io**, **DigimonMeta**, **Tabletop Simulator**, and **Untap** formats.
 
+The [Doomtown: Reloaded plugin](plugins/doomtown_reloaded/README.md) supports **DoomtownDB** format.
+
 The [Echoes of Astra plugin](plugins/echoes_of_astra/README.md) supports **AstraBuilder** format.
 
 The [Elestrals plugin](plugins/elestrals/README.md) supports **Elestrals** format.
