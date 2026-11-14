@@ -1,6 +1,6 @@
 # Lorcana Plugin
 
-This plugin reads a decklist, automatically fetches card art from [Lorcast](https://lorcast.com) and puts them in the proper `game/` directories.
+This plugin reads a decklist, automatically fetches card art from [Lorcast](https://lorcast.com) or [Dreamborn](https://dreamborn.ink) and puts them in the proper `game/` directories.
 
 This plugin supports decklist exports from [Dreamborn.ink](https://dreamborn.ink). To learn more, see [here](#formats).
 
@@ -28,7 +28,10 @@ Now you can create the PDF using [`create_pdf.py`](../../README.md#create_pdfpy)
 Usage: fetch.py [OPTIONS] DECK_PATH {dreamborn}
 
 Options:
-  --help  Show this message and exit.
+  --source [dreamborn|lorcast]  Source of the deck list (default: "dreamborn"
+                                if --lang is specified, otherwise "lorcast")
+  --lang [en|fr|de|it|es|ja]    Language code for card images (default: "en")
+  --help                        Show this message and exit.
 ```
 
 ## Formats
