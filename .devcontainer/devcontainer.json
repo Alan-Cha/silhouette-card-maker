@@ -1,0 +1,17 @@
+{
+  "name": "Python DevContainer on Ubuntu",
+  "image": "mcr.microsoft.com/devcontainers/python:3.14",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/venv/bin/python",
+        "python.terminal.activateEnvironment": true
+      }
+    }
+  },
+
+  "postCreateCommand": "rm -rf venv && python -m venv venv && venv/bin/python -m pip install -r requirements.txt",
+
+  "remoteUser": "vscode" // runs container as non-root user
+}
