@@ -4,7 +4,7 @@ from re import compile
 import os
 from plugins.sorcery_contested_realm.curiosa import get_curiosa_decklist
 
-card_data_tuple = Tuple[str, int, str] # Name, Quantity, Image URL
+card_data_tuple = Tuple[str, int, str, bool] # Name, Quantity, Image URL, Is Site
 
 def parse_deck_helper(deck_text: str, handle_card: Callable, deck_splitter: Callable, is_card_line: Callable[[str], bool], extract_card_data: Callable[[str], card_data_tuple]) -> None:
     error_lines = []
@@ -14,11 +14,11 @@ def parse_deck_helper(deck_text: str, handle_card: Callable, deck_splitter: Call
         if is_card_line(line):
             index = index + 1
 
-            name, quantity, image_url = extract_card_data(line)
+            name, quantity, image_url, is_site = extract_card_data(line)
 
             print(f'Index: {index}, quantity: {quantity}, name: {name}')
             try:
-                handle_card(index, name, image_url, quantity)
+                handle_card(index, name, image_url, quantity, is_site)
             except Exception as e:
                 print(f'Error: {e}')
                 error_lines.append((line, e))
@@ -30,7 +30,8 @@ def parse_deck_helper(deck_text: str, handle_card: Callable, deck_splitter: Call
         print(f'Errors: {error_lines}')
 
 def parse_curiosa(deck_text: str, handle_card: Callable) -> None:
-    SHARE_URL_PATTERN = compile(r'https://curiosa\.io/decks/(\w+)')
+    # Curiosa moved to sorcerytcg.com and kept its deck IDs, so accept both URLs
+    SHARE_URL_PATTERN = compile(r'https://(?:www\.)?(?:curiosa\.io|sorcerytcg\.com)/decks/(\w+)')
 
     if os.path.isfile(deck_text):
         deck_text = open(deck_text, "r").read()
@@ -58,16 +59,18 @@ def parse_curiosa(deck_text: str, handle_card: Callable) -> None:
         def extract_curiosa_card_data(line) -> card_data_tuple:
             match = is_curiosa_line(line)
             if match:
-                card_name = line.get('card', {}).get('name')
+                card = line.get('card', {})
+                card_name = card.get('name')
                 quantity = line.get('quantity')
-                img_variant = line.get('variantId')
-                img_variants = line.get('card', {}).get('variants', [])
+                printing_id = line.get('printingId')
+                printings = card.get('printings', [])
                 card_image = next(
-                    (variant.get('src') for variant in img_variants if variant.get('id') == img_variant),
-                    img_variants[0].get('src') if img_variants else None
+                    (printing.get('meta', {}).get('image') for printing in printings if printing.get('id') == printing_id),
+                    printings[0].get('meta', {}).get('image') if printings else None
                 )
+                is_site = card.get('engine', {}).get('type') == 'Site'
 
-                return (card_name, quantity, card_image)
+                return (card_name, quantity, card_image, is_site)
 
         parse_deck_helper(deck_id, handle_card, split_curiosa_deck, is_curiosa_line, extract_curiosa_card_data)
 
