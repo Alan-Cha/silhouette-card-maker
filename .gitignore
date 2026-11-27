@@ -25,6 +25,9 @@ test/*/output/*
 cutting_templates/dxf/
 cutting_templates/borderless/dxf/
 
+# Local Siser Leonardo Design Studio PDF calibration artifacts
+siser_marks/
+
 assets/extra_layouts/*
 !assets/extra_layouts/README.md
 
