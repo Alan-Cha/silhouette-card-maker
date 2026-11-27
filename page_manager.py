@@ -37,6 +37,9 @@ def generate_reg_mark(
     length: str,
     dpi: int,
     registration: Registration,
+    *,
+    paper_size_key: str | None = None,
+    orientation_key: str | None = None,
 ) -> Image.Image:
     """Generate a registration mark image for the given paper size.
 
@@ -47,13 +50,24 @@ def generate_reg_mark(
         thickness: Line thickness for registration marks.
         length: Line length for registration marks.
         dpi: Resolution in dots per inch.
-        registration: Registration pattern (THREE or FOUR).
+        registration: Registration pattern (THREE, FOUR, or SISER).
 
     Returns:
         PIL Image with registration marks drawn on a white background.
     """
     paper_width_mm = size_convert.size_to_mm(paper_width)
     paper_height_mm = size_convert.size_to_mm(paper_height)
+
+    if registration == Registration.SISER:
+        import siser_marks
+        return siser_marks.generate_siser_reg_mark(
+            paper_width_mm=paper_width_mm,
+            paper_height_mm=paper_height_mm,
+            dpi=dpi,
+            paper_size_key=paper_size_key,
+            orientation_key=orientation_key,
+        )
+
     inset_mm = size_convert.size_to_mm(inset)
     thickness_mm = size_convert.size_to_mm(thickness)
     thickness_pt = size_convert.size_to_pt(thickness)

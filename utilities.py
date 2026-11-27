@@ -1309,6 +1309,32 @@ def generate_pdf(
     reg_width  = paper_size_def.height if reg_is_portrait else paper_size_def.width
     reg_height = paper_size_def.width  if reg_is_portrait else paper_size_def.height
 
+    # Apply optional calibrated Siser Romeo/Juliet grid shift if present
+    siser_paper_key = (spec.paper_size.name if specialty and spec.paper_size.name else paper_size)
+    if registration == Registration.SISER:
+        import siser_marks
+        siser_dx_px, siser_dy_px = siser_marks.get_siser_grid_shift_px(
+            siser_paper_key, orientation.value, layout_config.ppi
+        )
+        if siser_dx_px or siser_dy_px:
+            front_x_pos = [xp + siser_dx_px for xp in x_pos]
+            front_y_pos = [yp + siser_dy_px for yp in y_pos]
+            # Mirror shift along the duplex long-edge flip axis for backs
+            if orientation == Orientation.PORTRAIT:
+                back_x_pos = [xp - siser_dx_px for xp in x_pos]
+                back_y_pos = [yp + siser_dy_px for yp in y_pos]
+            else:
+                back_x_pos = [xp + siser_dx_px for xp in x_pos]
+                back_y_pos = [yp - siser_dy_px for yp in y_pos]
+            x_pos = front_x_pos
+            y_pos = front_y_pos
+        else:
+            back_x_pos = x_pos
+            back_y_pos = y_pos
+    else:
+        back_x_pos = x_pos
+        back_y_pos = y_pos
+
     # Load an image with the registration marks
     with page_manager.generate_reg_mark(
         reg_width,
@@ -1318,6 +1344,8 @@ def generate_pdf(
         effective_length,
         layout_config.ppi,
         registration,
+        paper_size_key=siser_paper_key,
+        orientation_key=registration_orientation.value,
     ) as reg_im:
         reg_im = reg_im.resize([math.floor(reg_im.width * ppi_ratio), math.floor(reg_im.height * ppi_ratio)])
 
@@ -1404,7 +1432,11 @@ def generate_pdf(
                 back_card_images.append(single_back_image)
 
             front_page = reg_im.copy()
-            back_page = reg_im.copy()
+            back_page = (
+                Image.new("RGB", reg_im.size, "white")
+                if registration == Registration.SISER
+                else reg_im.copy()
+            )
 
             # Create front layout
             draw_card_layout(
@@ -1439,8 +1471,8 @@ def generate_pdf(
                 back_page,
                 num_rows,
                 num_cols,
-                x_pos,
-                y_pos,
+                back_x_pos,
+                back_y_pos,
                 card_width_px,
                 card_height_px,
                 max_print_bleed,
@@ -1461,7 +1493,7 @@ def generate_pdf(
             # Draw cutting path outlines on top of the card images
             if show_outline:
                 draw_outline(front_page, x_pos, y_pos, card_width_px, card_height_px, radius_px, ppi_ratio)
-                draw_outline(back_page, x_pos, y_pos, card_width_px, card_height_px, radius_px, ppi_ratio)
+                draw_outline(back_page, back_x_pos, back_y_pos, card_width_px, card_height_px, radius_px, ppi_ratio)
 
             # Add the front and back layouts (also handles portrait→landscape rotation)
             add_front_back_pages(
